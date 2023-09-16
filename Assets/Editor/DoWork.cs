@@ -88,4 +88,15 @@ public class DoWork : Editor
         }
     }
 
+
+    [MenuItem("Tools/ShowTargetPositions")]
+    static void ShowTargetPositions()
+    {
+        foreach (var l in TargetLocation.Data)
+        {
+            var pos = l.position;
+            Debug.DrawLine(pos, pos + Vector3.up * 100, Color.red, 10);
+        }
+
+    }
 }
