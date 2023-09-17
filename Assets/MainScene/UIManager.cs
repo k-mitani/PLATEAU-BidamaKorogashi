@@ -33,12 +33,14 @@ public class UIManager : MonoBehaviour
 
     public void OnResetBDamaClick()
     {
-
+        bdama.transform.position = initialBDamaPosition;
+        bdama.rb.velocity = Vector3.zero;
+        OnGravityResetClick();
     }
 
     public void OnResetTargetLocationClick()
     {
-
+        OnStageStart();
     }
 
     public void OnFreeCameraToggleClick()
@@ -80,6 +82,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+        initialBDamaPosition = bdama.transform.position;
         OnStageStart();
         StartCoroutine(UpdateDistanceLoop());
     }
@@ -210,6 +213,8 @@ public class UIManager : MonoBehaviour
 
         }
     }
+
+    private Vector3 initialBDamaPosition = Vector3.zero;
     [SerializeField] private bool controlModeForce;
     [SerializeField] private bool controlMode45;
     private float gravityAmount = 0;
