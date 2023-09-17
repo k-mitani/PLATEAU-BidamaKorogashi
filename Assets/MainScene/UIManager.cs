@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -17,6 +18,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textDescription;
     [SerializeField] private TextMeshProUGUI textAngle;
     [SerializeField] private GameObject goal;
+
+    [SerializeField] private float arrowKeyForce = 100f;
 
     [SerializeField] private BDama bdama;
 
@@ -47,6 +50,19 @@ public class UIManager : MonoBehaviour
     {
     }
 
+    public void OnGravityResetClick()
+    {
+        Debug.Log("Reset Gravity!");
+        Physics.gravity = Vector3.down * gravityAmount;
+        gravityDirection = Vector3.down;
+    }
+
+    public void OnVelocityResetClick()
+    {
+        Debug.Log("Reset Velocity!");
+        bdama.rb.velocity = Vector3.zero;
+    }
+
     public void OnJumpClick(float time)
     {
         Debug.Log("Jump! " + buttonJumpPressingTime.ToString());
@@ -58,6 +74,8 @@ public class UIManager : MonoBehaviour
     {
         Instance = this;
         panelMenu.SetActive(false);
+        // 重力の大きさを取得する。
+        gravityAmount = Physics.gravity.magnitude;
     }
 
     private void Start()
@@ -96,7 +114,108 @@ public class UIManager : MonoBehaviour
                 buttonTextJump.text = "ジャンプ";
             }
         }
+
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            OnJumpClick(bdama.jumpForceTimeMax / 2);
+            buttonJumpPressing = false;
+            buttonTextJump.text = "ジャンプ";
+        }
+        else if (Keyboard.current.cKey.isPressed)
+        {
+            OnGravityResetClick();
+        }
+        else if (Keyboard.current.vKey.isPressed)
+        {
+            OnVelocityResetClick();
+        }
+        else
+        {
+            buttonJumpPressingTime = 0;
+        }
+
+
+        // 力を加える。
+        if (controlModeForce)
+        {
+            if (Keyboard.current.upArrowKey.isPressed) bdama.rb.AddForce(Vector3.forward * arrowKeyForce, ForceMode.Impulse);
+            else if (Keyboard.current.downArrowKey.isPressed) bdama.rb.AddForce(Vector3.back * arrowKeyForce, ForceMode.Impulse);
+            else if (Keyboard.current.leftArrowKey.isPressed) bdama.rb.AddForce(Vector3.left * arrowKeyForce, ForceMode.Impulse);
+            else if (Keyboard.current.rightArrowKey.isPressed) bdama.rb.AddForce(Vector3.right * arrowKeyForce, ForceMode.Impulse);
+        }
+        else if (controlMode45)
+        {
+            // 前側45度に重力の方向を変える。
+            if (Keyboard.current.upArrowKey.isPressed) Physics.gravity = Quaternion.AngleAxis(-45, Vector3.right) * Vector3.down * gravityAmount;
+            else if (Keyboard.current.downArrowKey.isPressed) Physics.gravity = Quaternion.AngleAxis(-45, -Vector3.right) * Vector3.down * gravityAmount;
+            else if (Keyboard.current.leftArrowKey.isPressed) Physics.gravity = Quaternion.AngleAxis(-45, Vector3.forward) * Vector3.down * gravityAmount;
+            else if (Keyboard.current.rightArrowKey.isPressed) Physics.gravity = Quaternion.AngleAxis(-45, -Vector3.forward) * Vector3.down * gravityAmount;
+        }
+        // 重力の向きを変える。
+        else
+        {
+            var prevGravity = Physics.gravity;
+            if (Keyboard.current.upArrowKey.isPressed)
+            {
+                var nextGravityDirection = Quaternion.AngleAxis(-gravityAngleChangeSpeed * Time.deltaTime, Vector3.right) * gravityDirection;
+                var nextGravity = gravityDirection * gravityAmount;
+                var angle = Vector3.Angle(nextGravity, Vector3.down);
+                Debug.Log($"{angle} {prevGravityAngle}");
+                if (prevGravityAngle > angle || angle < 80)
+                {
+                    gravityDirection = nextGravityDirection;
+                    Physics.gravity = nextGravity;
+                    prevGravityAngle = angle;
+                }
+            }
+            else if (Keyboard.current.downArrowKey.isPressed)
+            {
+                var nextGravityDirection = Quaternion.AngleAxis(-gravityAngleChangeSpeed * Time.deltaTime, -Vector3.right) * gravityDirection;
+                var nextGravity = gravityDirection * gravityAmount;
+                var angle = Vector3.Angle(nextGravity, Vector3.down);
+                Debug.Log($"{angle} {prevGravityAngle}");
+                if (prevGravityAngle > angle || angle < 80)
+                {
+                    gravityDirection = nextGravityDirection;
+                    Physics.gravity = nextGravity;
+                    prevGravityAngle = angle;
+                }
+            }
+            else if (Keyboard.current.leftArrowKey.isPressed)
+            {
+                var nextGravityDirection = Quaternion.AngleAxis(-gravityAngleChangeSpeed * Time.deltaTime, Vector3.forward) * gravityDirection;
+                var nextGravity = gravityDirection * gravityAmount;
+                var angle = Vector3.Angle(nextGravity, Vector3.down);
+                Debug.Log($"{angle} {prevGravityAngle}");
+                if (prevGravityAngle > angle || angle < 80)
+                {
+                    gravityDirection = nextGravityDirection;
+                    Physics.gravity = nextGravity;
+                    prevGravityAngle = angle;
+                }
+            }
+            else if (Keyboard.current.rightArrowKey.isPressed)
+            {
+                var nextGravityDirection = Quaternion.AngleAxis(-gravityAngleChangeSpeed * Time.deltaTime, -Vector3.forward) * gravityDirection;
+                var nextGravity = gravityDirection * gravityAmount;
+                var angle = Vector3.Angle(nextGravity, Vector3.down);
+                Debug.Log($"{angle} {prevGravityAngle}");
+                if (prevGravityAngle > angle || angle < 80)
+                {
+                    gravityDirection = nextGravityDirection;
+                    Physics.gravity = nextGravity;
+                    prevGravityAngle = angle;
+                }
+            }
+
+        }
     }
+    [SerializeField] private bool controlModeForce;
+    [SerializeField] private bool controlMode45;
+    private float gravityAmount = 0;
+    private float prevGravityAngle = -1000;
+    [SerializeField] private Vector3 gravityDirection = Vector3.down;
+    [SerializeField] private float gravityAngleChangeSpeed = 60;
 
 
     private TargetLocation targetLocation;

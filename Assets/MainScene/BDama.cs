@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class BDama : MonoBehaviour
 {
-    private Rigidbody rb;
+    [NonSerialized] public Rigidbody rb;
     [SerializeField] private float jumpForceMax = 100;
     [SerializeField] public float jumpForceTimeMax = 5;
 
