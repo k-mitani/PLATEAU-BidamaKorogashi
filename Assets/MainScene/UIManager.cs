@@ -128,7 +128,6 @@ public class UIManager : MonoBehaviour
 
             var direction = targetXZ - bdamaXZ;
             var angle = Vector3.SignedAngle(Vector3.forward, direction, Vector3.up);
-            Debug.Log(angle);
 
             var START = -22.5f;
             var DIFF = 360 / 8;
@@ -145,5 +144,10 @@ public class UIManager : MonoBehaviour
             textDirection.text = text;
             textAngle.text = angle.ToString("N0") + "";
         }
+    }
+
+    internal void OnGoal()
+    {
+        OnStageStart();
     }
 }

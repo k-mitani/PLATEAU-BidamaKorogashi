@@ -22,4 +22,14 @@ public class BDama : MonoBehaviour
         Debug.Log(time / jumpForceTimeMax);
         rb.AddForce(Vector3.up * force, ForceMode.Impulse);
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Trigger!");
+        if (other.CompareTag("Goal"))
+        {
+            Debug.Log("Goal!");
+            UIManager.Instance.OnGoal();
+        }
+    }
 }
