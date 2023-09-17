@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -78,6 +80,8 @@ public class UIManager : MonoBehaviour
         panelMenu.SetActive(false);
         // 重力の大きさを取得する。
         gravityAmount = Physics.gravity.magnitude;
+        TryGetComponent(out vcam);
+        transposer = vcam.GetCinemachineComponent<CinemachineTransposer>();
     }
 
     private void Start()
@@ -85,10 +89,20 @@ public class UIManager : MonoBehaviour
         initialBDamaPosition = bdama.transform.position;
         OnStageStart();
         StartCoroutine(UpdateDistanceLoop());
+
+        // ビルド版なら、マップデータシーンを読み込む。
+        if (!Debug.isDebugBuild)
+        {
+            SceneManager.LoadScene("MapDataScene", LoadSceneMode.Additive);
+        }
     }
+
+    [SerializeField] CinemachineVirtualCamera vcam;
+    private CinemachineTransposer transposer;
 
     private void Update()
     {
+
         var prevPressed = buttonJumpPressing;
         var prevTime = buttonJumpPressingTime;
         if (buttonJump.pressing)

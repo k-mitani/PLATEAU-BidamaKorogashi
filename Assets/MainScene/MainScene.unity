@@ -2699,6 +2699,7 @@ MonoBehaviour:
   goal: {fileID: 338186010}
   arrowKeyForce: 100
   bdama: {fileID: 1620787763}
+  vcam: {fileID: 237956707}
   controlModeForce: 0
   controlMode45: 1
   gravityDirection: {x: 0, y: -1, z: 0}

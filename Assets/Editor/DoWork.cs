@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using PLATEAU.Geometries;
-using PLATEAU.Native;
+//using PLATEAU.Geometries;
+//using PLATEAU.Native;
 using UnityEditor;
 using UnityEngine;
 
@@ -72,20 +72,20 @@ public class DoWork : Editor
     [MenuItem("Tools/Calculate")]
     static void Calculate()
     {
-        var vec = new PlateauVector3d(
-            50565.8352578886,
-            0,
-            149463.247129192);
-        var geoReference = GeoReference.Create(vec, 1, CoordinateSystem.EUN, 4);
+        //var vec = new PlateauVector3d(
+        //    50565.8352578886,
+        //    0,
+        //    149463.247129192);
+        //var geoReference = GeoReference.Create(vec, 1, CoordinateSystem.EUN, 4);
 
 
-        foreach (var l in TargetLocation.Data)
-        {
-            //var kawara2 = new GeoCoordinate(34.33882, 134.052579999, 0);
-            var coord = new GeoCoordinate(l.coord[1], l.coord[0], 0);
-            var vec2 = geoReference.Project(coord);
-            Debug.Log(vec2);
-        }
+        //foreach (var l in TargetLocation.Data)
+        //{
+        //    //var kawara2 = new GeoCoordinate(34.33882, 134.052579999, 0);
+        //    var coord = new GeoCoordinate(l.coord[1], l.coord[0], 0);
+        //    var vec2 = geoReference.Project(coord);
+        //    Debug.Log(vec2);
+        //}
     }
 
 
