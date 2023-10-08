@@ -22,7 +22,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textAngle;
     [SerializeField] private GameObject goal;
 
-    [SerializeField] private BDama bdama;
+    [System.NonSerialized] public BDama bdama;
 
     [SerializeField] private AssetReference refMapDataScene;
     [SerializeField] private bool needLoadMapDataScene = true;
@@ -81,16 +81,20 @@ public class UIManager : MonoBehaviour
         panelMenu.SetActive(false);
         // 重力の大きさを取得する。
         gravityAmount = Physics.gravity.magnitude;
-        TryGetComponent(out vcam);
         transposer = vcam.GetCinemachineComponent<CinemachineTransposer>();
+    }
+
+    public void OnPlayerBdamaSpawned(BDama b)
+    {
+        bdama = b;
+        vcam.Follow = bdama.transform;
+        initialBDamaPosition = bdama.transform.position;
+        OnStageStart();
+        StartCoroutine(UpdateDistanceLoop());
     }
 
     private void Start()
     {
-        initialBDamaPosition = bdama.transform.position;
-        OnStageStart();
-        StartCoroutine(UpdateDistanceLoop());
-
         // 必要ならマップデータシーンを読み込む。
         if (needLoadMapDataScene)
         {
@@ -103,6 +107,7 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
+        if (bdama == null) return;
 
         var prevPressed = buttonJumpPressing;
         var prevTime = buttonJumpPressingTime;

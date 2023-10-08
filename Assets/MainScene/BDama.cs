@@ -1,14 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class BDama : MonoBehaviour
+public class BDama : NetworkBehaviour
 {
     [NonSerialized] public Rigidbody rb;
     [SerializeField] private float jumpForceMax = 100;
     [SerializeField] public float jumpForceTimeMax = 5;
 
+    public override void OnNetworkSpawn()
+    {
+        Debug.Log("Spawn!");
+        if (IsLocalPlayer)
+        {
+            UIManager.Instance.OnPlayerBdamaSpawned(this);
+        }
+    }
 
     private void Awake()
     {

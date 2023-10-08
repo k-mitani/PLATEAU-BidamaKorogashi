@@ -81,4 +81,11 @@ public class NGOManager : MonoBehaviour
     {
         gameObject.SetActive(true);
     }
+
+    private void OnDestroy()
+    {
+        NetworkManager.Singleton.OnClientConnectedCallback -= OnOnClientConnectedCallback;
+        NetworkManager.Singleton.OnClientDisconnectCallback -= OnOnClientDisconnectCallback;
+        NetworkManager.Singleton.Shutdown();
+    }
 }
