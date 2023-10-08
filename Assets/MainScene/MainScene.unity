@@ -2699,6 +2699,12 @@ MonoBehaviour:
   goal: {fileID: 338186010}
   arrowKeyForce: 100
   bdama: {fileID: 1620787763}
+  refMapDataScene:
+    m_AssetGUID: 0be738f1277dcac4da45f957e9d962de
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  needLoadMapDataScene: 1
   vcam: {fileID: 237956707}
   controlModeForce: 0
   controlMode45: 1

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Cinemachine;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -24,6 +25,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private float arrowKeyForce = 100f;
 
     [SerializeField] private BDama bdama;
+
+    [SerializeField] private AssetReference refMapDataScene;
+    [SerializeField] private bool needLoadMapDataScene = true;
 
     private bool buttonJumpPressing = false;
     private float buttonJumpPressingTime = 0f;
@@ -90,10 +94,10 @@ public class UIManager : MonoBehaviour
         OnStageStart();
         StartCoroutine(UpdateDistanceLoop());
 
-        // ビルド版なら、マップデータシーンを読み込む。
-        if (!Debug.isDebugBuild)
+        // 必要ならマップデータシーンを読み込む。
+        if (needLoadMapDataScene)
         {
-            SceneManager.LoadScene("MapDataScene", LoadSceneMode.Additive);
+            Addressables.LoadSceneAsync(refMapDataScene, LoadSceneMode.Additive);
         }
     }
 
