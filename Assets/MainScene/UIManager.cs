@@ -73,6 +73,14 @@ public class UIManager : MonoBehaviour
         bdama.Jump(time);
     }
 
+    public void OnJumpClickSumaho()
+    {
+        if (!Application.isEditor)
+        {
+            bdama.Jump(bdama.jumpForceTimeMax / 2);
+        }
+    }
+
 
     private void Awake()
     {
@@ -80,8 +88,8 @@ public class UIManager : MonoBehaviour
         panelMenu.SetActive(false);
         // 重力の大きさを取得する。
         gravityAmount = Physics.gravity.magnitude;
-        TryGetComponent(out vcam);
-        transposer = vcam.GetCinemachineComponent<CinemachineTransposer>();
+        //TryGetComponent(out vcam);
+        //transposer = vcam.GetCinemachineComponent<CinemachineTransposer>();
     }
 
     private void Start()
@@ -91,14 +99,14 @@ public class UIManager : MonoBehaviour
         StartCoroutine(UpdateDistanceLoop());
 
         // ビルド版なら、マップデータシーンを読み込む。
-        if (!Debug.isDebugBuild)
+        if (!Application.isEditor)
         {
-            SceneManager.LoadScene("MapDataScene", LoadSceneMode.Additive);
+            //SceneManager.LoadScene("MapDataScene", LoadSceneMode.Additive);
         }
     }
 
-    [SerializeField] CinemachineVirtualCamera vcam;
-    private CinemachineTransposer transposer;
+    //[SerializeField] CinemachineVirtualCamera vcam;
+    //private CinemachineTransposer transposer;
 
     private void Update()
     {
@@ -151,6 +159,17 @@ public class UIManager : MonoBehaviour
             buttonJumpPressingTime = 0;
         }
 
+        // スマホの場合
+        if (!Application.isEditor)
+        {
+            // スマホ版の操作
+            // 端末の傾きで、重力の向きを変える。
+            //Physics.gravity = Input.acceleration.normalized * gravityAmount;
+
+            //var gr = Quaternion.AngleAxis(-90, Vector3.right) * Input.acceleration.normalized * gravityAmount;
+            //gr.z = -gr.z;
+            //Physics.gravity = gr;
+        }
 
         // 力を加える。
         if (controlModeForce)
