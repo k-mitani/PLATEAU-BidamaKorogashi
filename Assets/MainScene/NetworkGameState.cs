@@ -15,6 +15,21 @@ public class NetworkGameState : NetworkBehaviour
         targetLocationIndex.OnValueChanged += TargetLocationIndex_OnValueChanged;
     }
 
+    public override void OnNetworkSpawn()
+    {
+        Debug.Log("NetworkGameState Spawned!");
+        GameManager.Instance.OnNetworkGameStateSpawned(this);
+        if (IsServer)
+        {
+            Debug.Log("Start Stage");
+            OnStageStart();
+        }
+        else
+        {
+            TargetLocationIndex_OnValueChanged(0, targetLocationIndex.Value);
+        }
+    }
+
     public void OnStageStart()
     {
         var newIndex = UnityEngine.Random.Range(0, TargetLocation.Data.Count);

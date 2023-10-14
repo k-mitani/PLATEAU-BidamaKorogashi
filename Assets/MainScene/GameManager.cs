@@ -50,28 +50,16 @@ public class GameManager : MonoBehaviour
 
     private void Singleton_OnServerStarted()
     {
-        StartCoroutine(Singleton_OnServerStarted2());
-    }
-    private IEnumerator Singleton_OnServerStarted2()
-    {
-        yield return new WaitForSeconds(3);
         Debug.Log("Server Started!");
-        networkGameState = Instantiate(networkGameStatePrefab);
-        networkGameState.GetComponent<NetworkObject>().Spawn();
-        networkGameState.targetLocationIndex.Value = UnityEngine.Random.Range(0, TargetLocation.Data.Count);
-        networkGameState.OnStageStart();
+        // 全プレーヤーで共有するゲーム状態を生成する。
+        var state  = Instantiate(networkGameStatePrefab);
+        state.GetComponent<NetworkObject>().Spawn();
+    }
 
-        while (true)
-        {
-            yield return new WaitForSeconds(1);
-            var targetLocation = networkGameState.targetLocation;
-            if (targetLocation == null) continue;
-            Debug.Log("Spawn no!");
-            var x = Instantiate(networkGameStatePrefab, targetLocation.position, Quaternion.identity);
-            x.GetComponent<NetworkObject>().Spawn();
-            // random position
-            x.transform.position = new Vector3(UnityEngine.Random.Range(-10, 10), 0, UnityEngine.Random.Range(-10, 10));
-        }
+    public void OnNetworkGameStateSpawned(NetworkGameState state)
+    {
+        Debug.Log("Set Network Game State");
+        networkGameState = state;
     }
 
     public void OnPlayerBdamaSpawned(BDama b)

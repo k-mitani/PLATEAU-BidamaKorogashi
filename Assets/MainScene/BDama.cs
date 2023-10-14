@@ -14,7 +14,7 @@ public class BDama : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        Debug.Log("Spawn!");
+        Debug.Log("BDama Spawned!");
         if (IsLocalPlayer)
         {
             GameManager.Instance.OnPlayerBdamaSpawned(this);
