@@ -23,16 +23,11 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] public GameObject goal;
 
-    [NonSerialized] public float gravityAmount = 0;
-
     public BDama PlayerBdama { get; private set; }
 
     private void Awake()
     {
         Instance = this;
-
-        // d—Í‚Ì‘å‚«‚³‚ğæ“¾‚·‚éB
-        gravityAmount = Physics.gravity.magnitude;
 
         transposer = vcam.GetCinemachineComponent<CinemachineTransposer>();
 
@@ -112,12 +107,6 @@ public class GameManager : MonoBehaviour
     {
         // TODO
         networkGameState.OnStageStart();
-    }
-
-    internal void ResetGravity()
-    {
-        Debug.Log("Reset Gravity!");
-        Physics.gravity = Vector3.down * gravityAmount;
     }
 
     internal void ResetVelocity()

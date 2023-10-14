@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
         var bdama = GameManager.Instance.PlayerBdama;
         bdama.transform.position = bdama.initialPosition;
         bdama.rb.velocity = Vector3.zero;
-        GameManager.Instance.ResetGravity();
+        OnGravityResetClick();
     }
 
     public void OnResetTargetLocationClick()
@@ -56,7 +56,10 @@ public class UIManager : MonoBehaviour
 
     public void OnGravityResetClick()
     {
-        GameManager.Instance.ResetGravity();
+        Debug.Log("Reset Gravity!");
+        var bdama = GameManager.Instance.PlayerBdama;
+        if (bdama == null) return;
+        bdama.UpdateGravityDirection(Vector3.down);
     }
 
     public void OnVelocityResetClick()
@@ -132,11 +135,10 @@ public class UIManager : MonoBehaviour
 
 
         // 前側45度に重力の方向を変える。
-        var gravityAmount = GameManager.Instance.gravityAmount;
-        if (Keyboard.current.upArrowKey.isPressed) Physics.gravity = Quaternion.AngleAxis(-45, Vector3.right) * Vector3.down * gravityAmount;
-        else if (Keyboard.current.downArrowKey.isPressed) Physics.gravity = Quaternion.AngleAxis(-45, -Vector3.right) * Vector3.down * gravityAmount;
-        else if (Keyboard.current.leftArrowKey.isPressed) Physics.gravity = Quaternion.AngleAxis(-45, Vector3.forward) * Vector3.down * gravityAmount;
-        else if (Keyboard.current.rightArrowKey.isPressed) Physics.gravity = Quaternion.AngleAxis(-45, -Vector3.forward) * Vector3.down * gravityAmount;
+        if (Keyboard.current.upArrowKey.isPressed) bdama.UpdateGravityDirection(Quaternion.AngleAxis(-45, Vector3.right) * Vector3.down);
+        else if (Keyboard.current.downArrowKey.isPressed) bdama.UpdateGravityDirection(Quaternion.AngleAxis(-45, -Vector3.right) * Vector3.down);
+        else if (Keyboard.current.leftArrowKey.isPressed) bdama.UpdateGravityDirection(Quaternion.AngleAxis(-45, Vector3.forward) * Vector3.down);
+        else if (Keyboard.current.rightArrowKey.isPressed) bdama.UpdateGravityDirection(Quaternion.AngleAxis(-45, -Vector3.forward) * Vector3.down);
     }
 
     internal void UpdateDistance(float distance, string text, float angle)
