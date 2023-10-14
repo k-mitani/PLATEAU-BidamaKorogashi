@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using Cinemachine;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
@@ -17,9 +18,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] CinemachineVirtualCamera vcam;
     private CinemachineTransposer transposer;
 
-    [SerializeField] private GameObject goal;
+    [SerializeField] private NetworkGameState networkGameStatePrefab;
+    private NetworkGameState networkGameState;
 
-    private TargetLocation targetLocation;
+    [SerializeField] public GameObject goal;
+
     [NonSerialized] public float gravityAmount = 0;
 
     public BDama PlayerBdama { get; private set; }
@@ -27,14 +30,12 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
         // 重力の大きさを取得する。
         gravityAmount = Physics.gravity.magnitude;
 
         transposer = vcam.GetCinemachineComponent<CinemachineTransposer>();
-    }
 
-    private void Start()
-    {
         // 必要ならマップデータシーンを読み込む。
         if (needLoadMapDataScene)
         {
@@ -42,25 +43,42 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        NetworkManager.Singleton.OnServerStarted += Singleton_OnServerStarted;
+    }
+
+    private void Singleton_OnServerStarted()
+    {
+        StartCoroutine(Singleton_OnServerStarted2());
+    }
+    private IEnumerator Singleton_OnServerStarted2()
+    {
+        yield return new WaitForSeconds(3);
+        Debug.Log("Server Started!");
+        networkGameState = Instantiate(networkGameStatePrefab);
+        networkGameState.GetComponent<NetworkObject>().Spawn();
+        networkGameState.targetLocationIndex.Value = UnityEngine.Random.Range(0, TargetLocation.Data.Count);
+        networkGameState.OnStageStart();
+
+        while (true)
+        {
+            yield return new WaitForSeconds(1);
+            var targetLocation = networkGameState.targetLocation;
+            if (targetLocation == null) continue;
+            Debug.Log("Spawn no!");
+            var x = Instantiate(networkGameStatePrefab, targetLocation.position, Quaternion.identity);
+            x.GetComponent<NetworkObject>().Spawn();
+            // random position
+            x.transform.position = new Vector3(UnityEngine.Random.Range(-10, 10), 0, UnityEngine.Random.Range(-10, 10));
+        }
+    }
+
     public void OnPlayerBdamaSpawned(BDama b)
     {
         PlayerBdama = b;
         vcam.Follow = PlayerBdama.transform;
-        OnStageStart();
         StartCoroutine(UpdateDistanceLoop());
-    }
-
-    public void OnStageStart()
-    {
-        var target = TargetLocation.Data[UnityEngine.Random.Range(0, TargetLocation.Data.Count)];
-        while (target == targetLocation)
-        {
-            target = TargetLocation.Data[UnityEngine.Random.Range(0, TargetLocation.Data.Count)];
-        }
-
-        targetLocation = target;
-        UIManager.Instance.UpdateTargetLocation(targetLocation);
-        goal.transform.position = targetLocation.position;
     }
 
     private IEnumerator UpdateDistanceLoop()
@@ -68,7 +86,15 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.3f);
+            if (networkGameState == null)
+            {
+                Debug.Log("notfound");
+                networkGameState = GameObject.FindObjectOfType<NetworkGameState>();
+                continue;
+            }
+            var targetLocation = networkGameState.targetLocation;
             if (targetLocation == null) continue;
+
 
             var bdamaXZ = new Vector3(PlayerBdama.transform.position.x, 0, PlayerBdama.transform.position.z);
             var targetXZ = new Vector3(targetLocation.position.x, 0, targetLocation.position.z);
@@ -96,7 +122,8 @@ public class GameManager : MonoBehaviour
 
     internal void OnGoal()
     {
-        OnStageStart();
+        // TODO
+        networkGameState.OnStageStart();
     }
 
     internal void ResetGravity()

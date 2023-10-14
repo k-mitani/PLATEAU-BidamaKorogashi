@@ -5526,13 +5526,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e05219cc2bb82ff468eb2596775d7456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  needLoadMapDataScene: 1
+  needLoadMapDataScene: 0
   refMapDataScene:
     m_AssetGUID: 0be738f1277dcac4da45f957e9d962de
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
   vcam: {fileID: 237956707}
+  networkGameStatePrefab: {fileID: 6651842213625286108, guid: 0f41ad1231831924699eb50d72547de3,
+    type: 3}
   goal: {fileID: 5404013551320623980}
 --- !u!4 &1948377958
 Transform:

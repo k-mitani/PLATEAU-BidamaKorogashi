@@ -41,7 +41,8 @@ public class UIManager : MonoBehaviour
 
     public void OnResetTargetLocationClick()
     {
-        GameManager.Instance.OnStageStart();
+        // TODO
+        //GameManager.Instance.OnStageStart();
     }
 
     public void OnFreeCameraToggleClick()
