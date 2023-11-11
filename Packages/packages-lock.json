@@ -1,5 +1,24 @@
 {
   "dependencies": {
+    "com.autodesk.fbx": {
+      "version": "4.1.2",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.synesthesias.plateau-unity-sdk": {
+      "version": "https://github.com/Project-PLATEAU/PLATEAU-SDK-for-Unity.git#v2.1.1-alpha",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.0.2",
+        "com.unity.shadergraph": "12.1.8",
+        "com.unity.formats.fbx": "4.1.2",
+        "com.unity.test-framework": "1.1.31"
+      },
+      "hash": "a29929ca9b67d1c55f9eb4ec0456e691fec39cf7"
+    },
     "com.unity.burst": {
       "version": "1.8.4",
       "depth": 1,
