@@ -21,6 +21,10 @@ MonoBehaviour:
     m_Address: Assets/Scenes/MapDataScene.unity
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 3c2c79064abcd02409a305ce531a8e85
+    m_Address: Assets/Scenes/MapDataSceneTakamatsu.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 04679e744c38dff49a2fae25e00c7089, type: 2}
   m_SchemaSet:

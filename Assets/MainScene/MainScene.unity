@@ -5526,9 +5526,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e05219cc2bb82ff468eb2596775d7456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  needLoadMapDataScene: 0
+  needLoadMapDataScene: 1
   refMapDataScene:
-    m_AssetGUID: 0be738f1277dcac4da45f957e9d962de
+    m_AssetGUID: 3c2c79064abcd02409a305ce531a8e85
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
