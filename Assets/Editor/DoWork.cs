@@ -12,7 +12,21 @@ public class DoWork : Editor
     {
         foreach (var obj in Selection.gameObjects)
         {
-            var mesh = obj.GetComponent<MeshFilter>().sharedMesh;
+            Process(obj);
+        }
+
+        static void Process(GameObject obj)
+        {
+            // 子要素も見ていく。
+            for (int i = 0; i < obj.transform.childCount; i++)
+            {
+                var child = obj.transform.GetChild(i);
+                Process(child.gameObject);
+            }
+
+            if (!obj.TryGetComponent<MeshFilter>(out var meshFilter)) return;
+            var mesh = meshFilter.sharedMesh;
+
             var vertices = mesh.vertices;
             var targetLayer = 1 << LayerMask.NameToLayer("Floor");
             for (int i = 0; i < vertices.Length; i++)
@@ -43,7 +57,20 @@ public class DoWork : Editor
     {
         foreach (var obj in Selection.gameObjects)
         {
-            var mesh = obj.GetComponent<MeshFilter>().sharedMesh;
+            Process(obj);
+        }
+
+        static void Process(GameObject obj)
+        {
+            // 子要素も見ていく。
+            for (int i = 0; i < obj.transform.childCount; i++)
+            {
+                var child = obj.transform.GetChild(i);
+                Process(child.gameObject);
+            }
+
+            if (!obj.TryGetComponent<MeshFilter>(out var meshFilter)) return;
+            var mesh = meshFilter.sharedMesh;
             var vertices = mesh.vertices;
             var targetLayer = 1 << LayerMask.NameToLayer("Road");
             for (int i = 0; i < vertices.Length; i++)
@@ -86,6 +113,29 @@ public class DoWork : Editor
         //    var vec2 = geoReference.Project(coord);
         //    Debug.Log(vec2);
         //}
+    }
+
+    [MenuItem("Tools/DeleteDeactivatedObjects")]
+    static void DeleteDeactivatedBuildings()
+    {
+        foreach (var obj in Selection.gameObjects)
+        {
+            Process(obj);
+        }
+
+        static void Process(GameObject obj)
+        {
+            if (!obj.activeSelf) DestroyImmediate(obj);
+            else
+            {
+                // 子要素も見ていく。
+                for (int i = 0; i < obj.transform.childCount; i++)
+                {
+                    var child = obj.transform.GetChild(i);
+                    Process(child.gameObject);
+                }
+            }
+        }
     }
 
 
