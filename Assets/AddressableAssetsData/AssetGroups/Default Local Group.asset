@@ -17,10 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: dd0625f102e0f4d4daa137f8a9a84c83
   m_SerializeEntries:
-  - m_GUID: 0be738f1277dcac4da45f957e9d962de
-    m_Address: Assets/Scenes/MapDataScene.unity
-    m_ReadOnly: 0
-    m_SerializedLabels: []
   - m_GUID: 3c2c79064abcd02409a305ce531a8e85
     m_Address: Assets/Scenes/MapDataSceneTakamatsu.unity
     m_ReadOnly: 0

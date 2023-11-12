@@ -1,7 +1,4 @@
 <linker>
-  <assembly fullname="PLATEAU.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-    <type fullname="PLATEAU.Util.Async.CoroutineDispatcher" preserve="all" />
-  </assembly>
   <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
     <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
   </assembly>
