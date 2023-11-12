@@ -74,6 +74,16 @@ public class UIManager : MonoBehaviour
     }
 
 
+    public void OnJumpClick()
+    {
+        // Android版でなければ何もしない。
+        if (Application.platform != RuntimePlatform.Android) return;
+
+        var bdama = GameManager.Instance.PlayerBdama;
+        bdama.Jump(bdama.jumpForceTimeMax / 3f);
+    }
+
+
     private void Awake()
     {
         Instance = this;
@@ -133,6 +143,16 @@ public class UIManager : MonoBehaviour
             buttonJumpPressingTime = 0;
         }
 
+        // スマホの場合
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            // スマホ版の操作
+            // 端末の傾きで、重力の向きを変える。
+            // Physics.gravity = Input.acceleration.normalized * gravityAmount;
+            var gr = Quaternion.AngleAxis(-90, Vector3.right) * Input.acceleration.normalized;
+            gr.z = -gr.z;
+            bdama.UpdateGravityDirection(gr);
+        }
 
         // 前側45度に重力の方向を変える。
         if (Keyboard.current.upArrowKey.isPressed) bdama.UpdateGravityDirection(Quaternion.AngleAxis(-45, Vector3.right) * Vector3.down);
