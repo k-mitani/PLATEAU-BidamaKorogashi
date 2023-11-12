@@ -22,6 +22,17 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textDescription;
     [SerializeField] private TextMeshProUGUI textAngle;
 
+    [SerializeField] private GameObject panelDebug;
+    [SerializeField] private TextMeshProUGUI textDebug;
+    [SerializeField] public bool debugMode = false;
+
+    [SerializeField] private float mobileJumpAccelerationMagnitudeDiffrenceThreshold = 3;
+    [SerializeField] private float mobileJumpForceAdjustment = 0.15f;
+    [SerializeField] private float mobileJumpCoolTimeMax = 0.5f;
+    [SerializeField] private float mobileJumpCoolTime = 0f;
+
+    private bool collectData = false;
+
 
     private bool buttonJumpPressing = false;
     private float buttonJumpPressingTime = 0f;
@@ -43,6 +54,13 @@ public class UIManager : MonoBehaviour
     {
         // TODO
         //GameManager.Instance.OnStageStart();
+    }
+
+    public void OnDebugToggleClick()
+    {
+        debugMode = !debugMode;
+        panelDebug.SetActive(debugMode);
+        textDebug.text = "";
     }
 
     public void OnFreeCameraToggleClick()
@@ -80,7 +98,12 @@ public class UIManager : MonoBehaviour
         if (Application.platform != RuntimePlatform.Android) return;
 
         var bdama = GameManager.Instance.PlayerBdama;
-        bdama.Jump(bdama.jumpForceTimeMax / 3f);
+        bdama.Jump(bdama.jumpForceTimeMax / mobileJumpForceAdjustment);
+    }
+
+    public void OnCollectDataToggleClick()
+    {
+        collectData = !collectData;
     }
 
 
@@ -159,6 +182,40 @@ public class UIManager : MonoBehaviour
         else if (Keyboard.current.downArrowKey.isPressed) bdama.UpdateGravityDirection(Quaternion.AngleAxis(-45, -Vector3.right) * Vector3.down);
         else if (Keyboard.current.leftArrowKey.isPressed) bdama.UpdateGravityDirection(Quaternion.AngleAxis(-45, Vector3.forward) * Vector3.down);
         else if (Keyboard.current.rightArrowKey.isPressed) bdama.UpdateGravityDirection(Quaternion.AngleAxis(-45, -Vector3.forward) * Vector3.down);
+    }
+
+    private Vector3 prevAcceleration = Vector3.zero;
+    private void FixedUpdate()
+    {
+        var prev = prevAcceleration;
+        var current = Input.acceleration;
+        prevAcceleration = current;
+        if (debugMode)
+        {
+            if (collectData)
+            {
+                textDebug.text = $"raw:{current}\t{current - prev}\t{current.magnitude:0.00}\t{(current - prev).magnitude:0.00}{Environment.NewLine}{textDebug.text}";
+            }
+            if (Application.platform == RuntimePlatform.Android)
+            {
+            }
+        }
+        
+
+        var accelerationDiff = (current - prev).magnitude;
+        if (accelerationDiff > mobileJumpAccelerationMagnitudeDiffrenceThreshold)
+        {
+            if (mobileJumpCoolTime <= 0)
+            {
+                var bdama = GameManager.Instance.PlayerBdama;
+                bdama.Jump(accelerationDiff * bdama.jumpForceTimeMax / mobileJumpForceAdjustment);
+                mobileJumpCoolTime = mobileJumpCoolTimeMax;
+            }
+        }
+        if (mobileJumpCoolTime > 0)
+        {
+            mobileJumpCoolTime -= Time.fixedDeltaTime;
+        }
     }
 
     internal void UpdateDistance(float distance, string text, float angle)

@@ -10,13 +10,14 @@ public class BDama : NetworkBehaviour
     [NonSerialized] public Vector3 initialPosition = Vector3.zero;
     [SerializeField] private float jumpForceMax = 100;
     [SerializeField] public float jumpForceTimeMax = 5;
-    [SerializeField] private float gravityAmount = 9.81f * 30;
+    [SerializeField] private float gravityAmountAdjustment = 30;
+    [SerializeField] private float gravityAmountNormal = 9.81f;
     public NetworkVariable<Vector3> gravity = new(Vector3.zero, writePerm: NetworkVariableWritePermission.Owner);
 
     public override void OnNetworkSpawn()
     {
         Debug.Log("BDama Spawned!");
-        gravity.Value = Vector3.down * gravityAmount;
+        gravity.Value = Vector3.down * gravityAmountNormal * gravityAmountAdjustment;
         if (IsLocalPlayer)
         {
             GameManager.Instance.OnPlayerBdamaSpawned(this);
@@ -60,7 +61,7 @@ public class BDama : NetworkBehaviour
 
     internal void UpdateGravityDirection(Vector3 vector3)
     {
-        gravity.Value = vector3 * gravityAmount;
+        gravity.Value = gravityAmountAdjustment * gravityAmountNormal * vector3;
     }
 
     private void FixedUpdate()
