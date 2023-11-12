@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 
         transposer = vcam.GetCinemachineComponent<CinemachineTransposer>();
 
-        // •K—v‚È‚çƒ}ƒbƒvƒf[ƒ^ƒV[ƒ“‚ğ“Ç‚İ‚ŞB
+        // å¿…è¦ãªã‚‰ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ã‚·ãƒ¼ãƒ³ã‚’èª­ã¿è¾¼ã‚€ã€‚
         if (needLoadMapDataScene)
         {
             Addressables.LoadSceneAsync(refMapDataScene, LoadSceneMode.Additive);
@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
     private void Singleton_OnServerStarted()
     {
         Debug.Log("Server Started!");
-        // ‘SƒvƒŒ[ƒ„[‚Å‹¤—L‚·‚éƒQ[ƒ€ó‘Ô‚ğ¶¬‚·‚éB
+        // å…¨ãƒ—ãƒ¬ãƒ¼ãƒ¤ãƒ¼ã§å…±æœ‰ã™ã‚‹ã‚²ãƒ¼ãƒ çŠ¶æ…‹ã‚’ç”Ÿæˆã™ã‚‹ã€‚
         var state  = Instantiate(networkGameStatePrefab);
         state.GetComponent<NetworkObject>().Spawn();
     }
@@ -89,15 +89,15 @@ public class GameManager : MonoBehaviour
             var START = -22.5f;
             var DIFF = 360 / 8;
             var text = angle.ToString("N0");
-            if (angle > START + DIFF * 0 && angle < START + DIFF * 1) text = "–k";
-            else if (angle > START + DIFF * 1 && angle < START + DIFF * 2) text = "–k“Œ";
-            else if (angle > START + DIFF * 2 && angle < START + DIFF * 3) text = "“Œ";
-            else if (angle > START + DIFF * 3 && angle < START + DIFF * 4) text = "“ì“Œ";
-            else if (angle > START + DIFF * 4 && angle < START + DIFF * 5) text = "“ì";
-            else if (angle + 360 > START + DIFF * 4 && angle + 360 < START + DIFF * 5) text = "“ì";
-            else if (angle + 360 > START + DIFF * 5 && angle + 360 < START + DIFF * 6) text = "“ì¼";
-            else if (angle + 360 > START + DIFF * 6 && angle + 360 < START + DIFF * 7) text = "¼";
-            else if (angle + 360 > START + DIFF * 7 && angle + 360 < START + DIFF * 8) text = "–k¼";
+            if (angle > START + DIFF * 0 && angle < START + DIFF * 1) text = "åŒ—";
+            else if (angle > START + DIFF * 1 && angle < START + DIFF * 2) text = "åŒ—æ±";
+            else if (angle > START + DIFF * 2 && angle < START + DIFF * 3) text = "æ±";
+            else if (angle > START + DIFF * 3 && angle < START + DIFF * 4) text = "å—æ±";
+            else if (angle > START + DIFF * 4 && angle < START + DIFF * 5) text = "å—";
+            else if (angle + 360 > START + DIFF * 4 && angle + 360 < START + DIFF * 5) text = "å—";
+            else if (angle + 360 > START + DIFF * 5 && angle + 360 < START + DIFF * 6) text = "å—è¥¿";
+            else if (angle + 360 > START + DIFF * 6 && angle + 360 < START + DIFF * 7) text = "è¥¿";
+            else if (angle + 360 > START + DIFF * 7 && angle + 360 < START + DIFF * 8) text = "åŒ—è¥¿";
 
             UIManager.Instance.UpdateDistance(distance, text, angle);
         }

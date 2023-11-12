@@ -17,7 +17,7 @@ public class DoWork : Editor
 
         static void Process(GameObject obj)
         {
-            // éqóvëfÇ‡å©ÇƒÇ¢Ç≠ÅB
+            // Â≠êË¶ÅÁ¥†„ÇÇË¶ã„Å¶„ÅÑ„Åè„ÄÇ
             for (int i = 0; i < obj.transform.childCount; i++)
             {
                 var child = obj.transform.GetChild(i);
@@ -62,7 +62,7 @@ public class DoWork : Editor
 
         static void Process(GameObject obj)
         {
-            // éqóvëfÇ‡å©ÇƒÇ¢Ç≠ÅB
+            // Â≠êË¶ÅÁ¥†„ÇÇË¶ã„Å¶„ÅÑ„Åè„ÄÇ
             for (int i = 0; i < obj.transform.childCount; i++)
             {
                 var child = obj.transform.GetChild(i);
@@ -128,7 +128,7 @@ public class DoWork : Editor
             if (!obj.activeSelf) DestroyImmediate(obj);
             else
             {
-                // éqóvëfÇ‡å©ÇƒÇ¢Ç≠ÅB
+                // Â≠êË¶ÅÁ¥†„ÇÇË¶ã„Å¶„ÅÑ„Åè„ÄÇ
                 for (int i = 0; i < obj.transform.childCount; i++)
                 {
                     var child = obj.transform.GetChild(i);

@@ -12,7 +12,7 @@ public class NGOManager : MonoBehaviour
 
     private (string, ushort) GetServerAddress()
     {
-        // "127.0.0.1:7777"‚Æ‚¢‚¤Œ`®
+        // "127.0.0.1:7777"ã¨ã„ã†å½¢å¼
         var serverAddress = txtServerIp.text;
         var serverAddressSplit = serverAddress.Split(':');
         var serverIp = serverAddressSplit[0];
