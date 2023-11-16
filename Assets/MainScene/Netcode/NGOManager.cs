@@ -84,8 +84,12 @@ public class NGOManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        NetworkManager.Singleton.OnClientConnectedCallback -= OnOnClientConnectedCallback;
-        NetworkManager.Singleton.OnClientDisconnectCallback -= OnOnClientDisconnectCallback;
-        NetworkManager.Singleton.Shutdown();
+        var manager = NetworkManager.Singleton;
+        if (manager != null)
+        {
+            manager.OnClientConnectedCallback -= OnOnClientConnectedCallback;
+            manager.OnClientDisconnectCallback -= OnOnClientDisconnectCallback;
+            manager.Shutdown();
+        }
     }
 }
