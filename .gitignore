@@ -74,3 +74,6 @@ Packages/com.singularitygroup.hotreload/
 Assets/MeshBaker/
 Assets/StreamingAssets/.PLATEAU/
 Assets/External/MeshBaker/
+Assets/Scenes/MapDataScene.unity*
+Assets/Scenes/MapDataSceneTakamatsu.unity*
+Assets/Scenes/MapDataSceneTakamatsuRaw.unity*
