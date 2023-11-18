@@ -114,7 +114,7 @@ public class NGOManager : MonoBehaviour
         
         currentServerEndPoint = endpoint;
         Debug.Log($"サーバーを開始します。{endpoint}");
-        trans.SetConnectionData(endpoint);
+        trans.SetConnectionData(endpoint, endpoint);
         net.StartHost();
     }
 
@@ -139,7 +139,7 @@ public class NGOManager : MonoBehaviour
 
         currentRemoteEndPoint = endpoint;
         Debug.Log($"接続を開始します。{endpoint}");
-        trans.SetConnectionData(endpoint);
+        trans.SetConnectionData(endpoint, endpoint);
         net.StartClient();
     }
 
