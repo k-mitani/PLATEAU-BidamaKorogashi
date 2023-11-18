@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textDescription;
     [SerializeField] private TextMeshProUGUI textAngle;
 
+    [SerializeField] private UIManagerNGO ngo;
     [SerializeField] private GameObject panelDebug;
     [SerializeField] private TextMeshProUGUI textDebug;
     [SerializeField] public bool debugMode = false;
@@ -61,6 +62,11 @@ public class UIManager : MonoBehaviour
         debugMode = !debugMode;
         panelDebug.SetActive(debugMode);
         textDebug.text = "";
+    }
+
+    public void OnNetworkToggleClick()
+    {
+        ngo.gameObject.SetActive(!ngo.gameObject.activeSelf);
     }
 
     public void OnFreeCameraToggleClick()
