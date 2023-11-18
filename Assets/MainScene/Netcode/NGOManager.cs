@@ -19,6 +19,8 @@ public class NGOManager : MonoBehaviour
     [Header("デバッグ表示用")]
     [SerializeField] private NetworkEndPoint currentServerEndPoint;
     [SerializeField] private NetworkEndPoint currentRemoteEndPoint;
+    [SerializeField] private NGOMode currentMode;
+    private bool shouldShutdown;
 
     private void Awake()
     {
@@ -37,6 +39,7 @@ public class NGOManager : MonoBehaviour
             Debug.Log("UDP初期化エラー: " + ex.ToString());
         }
 
+        net.OnTransportFailure += Net_OnTransportFailure;
         net.OnServerStarted += Net_OnServerStarted;
         net.OnServerStopped += Net_OnServerStopped;
         net.OnClientStarted += Net_OnClientStarted;
@@ -76,12 +79,17 @@ public class NGOManager : MonoBehaviour
         }
     }
 
+    private void Net_OnTransportFailure()
+    {
+        Debug.Log($"NGO EVENT トランスポート失敗");
+    }
+
     private void Net_OnServerStarted()
     {
         Debug.Log($"NGO EVENT サーバー開始({currentServerEndPoint})");
     }
 
-    private void Net_OnServerStopped(bool obj)
+    private void Net_OnServerStopped(bool localIsClient)
     {
         Debug.Log($"NGO EVENT サーバー停止({currentServerEndPoint})");
     }
@@ -91,19 +99,31 @@ public class NGOManager : MonoBehaviour
         Debug.Log($"NGO EVENT クライアント開始({currentRemoteEndPoint})");
     }
 
-    private void Net_OnClientStopped(bool obj)
+    private void Net_OnClientStopped(bool localIsServer)
     {
         Debug.Log($"NGO EVENT クライアント停止({currentRemoteEndPoint})");
+        // 人為的に停止したのではなくて、接続が切れた場合は再接続を試みる。
+        if (currentMode == NGOMode.Client && !shouldShutdown)
+        {
+            Debug.Log($"NGO 切断されたため、クライアント再接続を試行します({currentRemoteEndPoint})");
+            // なぜかすぐに開始すると接続できないので、適当に1秒待ってから再接続する。
+            StartCoroutine(aoiueo());
+            IEnumerator aoiueo()
+            {
+                yield return null;
+                StartClient(currentRemoteEndPoint);
+            }
+        }
     }
 
-    private void Net_OnClientConnectedCallback(ulong clientId)
+    private void Net_OnClientConnectedCallback(ulong localClientId)
     {
-        Debug.Log($"NGO EVENT クライアント接続({clientId})");
+        Debug.Log($"NGO EVENT クライアント接続({localClientId})");
     }
 
-    private void Net_OnClientDisconnectCallback(ulong clientId)
+    private void Net_OnClientDisconnectCallback(ulong localClientId)
     {
-        Debug.Log($"NGO EVENT クライアント切断({clientId})");
+        Debug.Log($"NGO EVENT クライアント切断({localClientId})");
     }
 
 
@@ -113,6 +133,8 @@ public class NGOManager : MonoBehaviour
         if (trans == null) throw new Exception("UnityTransportが見つかりません。");
         
         currentServerEndPoint = endpoint;
+        currentMode = NGOMode.Server;
+        shouldShutdown = false;
         Debug.Log($"サーバーを開始します。{endpoint}");
         trans.SetConnectionData(endpoint, endpoint);
         net.StartHost();
@@ -138,6 +160,8 @@ public class NGOManager : MonoBehaviour
         if (trans == null) throw new Exception("UnityTransportが見つかりません。");
 
         currentRemoteEndPoint = endpoint;
+        currentMode = NGOMode.Client;
+        shouldShutdown = false;
         Debug.Log($"接続を開始します。{endpoint}");
         trans.SetConnectionData(endpoint, endpoint);
         net.StartClient();
@@ -145,11 +169,13 @@ public class NGOManager : MonoBehaviour
 
     public void Shutdown()
     {
+        shouldShutdown = true;
         net.Shutdown();
     }
 
     private void OnDestroy()
     {
+        shouldShutdown = true;
         if (net != null)
         {
             net.Shutdown();
@@ -159,4 +185,12 @@ public class NGOManager : MonoBehaviour
             udp.Dispose();
         }
     }
+
+}
+
+public enum NGOMode : int
+{
+    None = 0,
+    Server,
+    Client,
 }
