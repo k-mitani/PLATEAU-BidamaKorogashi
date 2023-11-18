@@ -10,6 +10,7 @@ using ParrelSync;
 
 public class UIManagerNGO : MonoBehaviour
 {
+    [SerializeField] private GameObject root;
     [SerializeField] private TMP_InputField txtServerIp;
     [SerializeField] private TextMeshProUGUI labelServerInfoMessage;
 
@@ -41,6 +42,7 @@ public class UIManagerNGO : MonoBehaviour
 #endif
         if (previousMode != NGOMode.None && autoStart)
         {
+            root.SetActive(false);
             Debug.Log($"自動起動有効: {previousMode}");
             StartCoroutine(AutoStart(previousMode));
             IEnumerator AutoStart(NGOMode mode)
@@ -55,10 +57,17 @@ public class UIManagerNGO : MonoBehaviour
                 {
                     OnClickConnect();
                 }
-                gameObject.SetActive(false);
             }
         }
+        else
+        {
+            root.SetActive(true);
+        }
     }
+
+    public void ToggleVisibility() => root.SetActive(!root.activeSelf);
+    public void Show() => root.SetActive(true);
+    public void Hide() => root.SetActive(false);
 
     public void OnClickStartServer()
     {

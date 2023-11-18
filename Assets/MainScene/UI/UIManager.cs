@@ -66,7 +66,7 @@ public class UIManager : MonoBehaviour
 
     public void OnNetworkToggleClick()
     {
-        ngo.gameObject.SetActive(!ngo.gameObject.activeSelf);
+        ngo.ToggleVisibility();
     }
 
     public void OnFreeCameraToggleClick()
