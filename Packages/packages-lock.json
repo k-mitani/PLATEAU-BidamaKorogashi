@@ -7,6 +7,15 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.singularitygroup.hotreload": {
+      "version": "file:com.singularitygroup.hotreload",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0",
+        "com.unity.modules.unitywebrequest": "1.0.0"
+      }
+    },
     "com.synesthesias.plateau-unity-sdk": {
       "version": "https://github.com/Project-PLATEAU/PLATEAU-SDK-for-Unity.git#v2.1.1-alpha",
       "depth": 0,
