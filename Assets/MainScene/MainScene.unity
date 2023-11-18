@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   net: {fileID: 592512749}
+  currentMode: 0
 --- !u!4 &1830313
 Transform:
   m_ObjectHideFlags: 0
@@ -1762,7 +1763,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 592512748}
-    PlayerPrefab: {fileID: 2605800598214708626, guid: 91f4e1db40c7e7447beb11c35bd23a40,
+    PlayerPrefab: {fileID: 3244427706305670295, guid: e0ff0c7d5aab49040baaf20caba4ecd0,
       type: 3}
     Prefabs:
       NetworkPrefabsLists:

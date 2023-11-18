@@ -17,12 +17,12 @@ public class BDama : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         Debug.Log("BDama Spawned!");
-        gravity.Value = Vector3.down * gravityAmountNormal * gravityAmountAdjustment;
         if (IsLocalPlayer)
         {
             GameManager.Instance.OnPlayerBdamaSpawned(this);
             Debug.Log("Set Owner!");
             SetOwnerServerRpc();
+            gravity.Value = gravityAmountAdjustment * gravityAmountNormal * Vector3.down;
         }
     }
 

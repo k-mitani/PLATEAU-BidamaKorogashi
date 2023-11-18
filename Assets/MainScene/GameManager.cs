@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private static string TAG { get; } = "[GM]";
     public static GameManager Instance { get; private set; }
 
     [SerializeField] private bool needLoadMapDataScene = true;
@@ -19,9 +20,14 @@ public class GameManager : MonoBehaviour
     private CinemachineTransposer transposer;
 
     [SerializeField] private NetworkGameState networkGameStatePrefab;
-    private NetworkGameState networkGameState;
+    private NetworkGameState state;
 
     [SerializeField] public GameObject goal;
+
+    [Header("デバッグ用")]
+    [SerializeField] private NetworkPlayer localPlayer;
+    [SerializeField] private List<NetworkPlayer> players = new();
+
 
     public BDama PlayerBdama { get; private set; }
 
@@ -38,23 +44,46 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    /// <summary>
+    /// サーバー専用
+    /// サーバー開始時に呼ばれます。
+    /// （サーバー用プレーヤーのspawnが終わってから呼ばれます）
+    /// </summary>
+    public void OnServerStarted()
     {
-        NetworkManager.Singleton.OnServerStarted += Singleton_OnServerStarted;
-    }
-
-    private void Singleton_OnServerStarted()
-    {
-        Debug.Log("Server Started!");
+        Debug.Log($"{TAG} Server Started!");
         // 全プレーヤーで共有するゲーム状態を生成する。
         var state  = Instantiate(networkGameStatePrefab);
         state.GetComponent<NetworkObject>().Spawn();
     }
 
+    /// <summary>
+    /// サバクラ両用
+    /// ゲーム状態が生成され、ネットワーク同期済みになったときに呼ばれます。
+    /// </summary>
     public void OnNetworkGameStateSpawned(NetworkGameState state)
     {
-        Debug.Log("Set Network Game State");
-        networkGameState = state;
+        this.state = state;
+    }
+
+    public void OnPlayerSpawned(NetworkPlayer player)
+    {
+        Debug.Log($"{TAG} Player Spawned!");
+        players.Add(player);
+        if (player.IsLocalPlayer)
+        {
+            localPlayer = player;
+        }
+    }
+
+    public void OnPlayerDespawned(NetworkPlayer player)
+    {
+        Debug.Log($"{TAG} Player Despawned!");
+        players.Remove(player);
+        if (player.IsLocalPlayer)
+        {
+            localPlayer = null;
+        }
     }
 
     public void OnPlayerBdamaSpawned(BDama b)
@@ -69,13 +98,13 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.3f);
-            if (networkGameState == null)
+            if (state == null)
             {
                 Debug.Log("notfound");
-                networkGameState = GameObject.FindObjectOfType<NetworkGameState>();
+                state = GameObject.FindObjectOfType<NetworkGameState>();
                 continue;
             }
-            var targetLocation = networkGameState.targetLocation;
+            var targetLocation = state.targetLocation;
             if (targetLocation == null) continue;
 
 
@@ -106,7 +135,7 @@ public class GameManager : MonoBehaviour
     internal void OnGoal()
     {
         // TODO
-        networkGameState.OnStageStart();
+        state.OnStageStart();
     }
 
     internal void ResetVelocity()

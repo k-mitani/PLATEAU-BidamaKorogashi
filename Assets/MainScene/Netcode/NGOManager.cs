@@ -87,6 +87,7 @@ public class NGOManager : MonoBehaviour
     private void Net_OnServerStarted()
     {
         Debug.Log($"NGO EVENT サーバー開始({currentServerEndPoint})");
+        GameManager.Instance.OnServerStarted();
     }
 
     private void Net_OnServerStopped(bool localIsClient)
