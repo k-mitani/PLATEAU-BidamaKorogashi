@@ -1,95 +1,162 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+using System.Linq;
+using System.Net;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using Unity.Networking.Transport;
 using UnityEngine;
 
 public class NGOManager : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField txtServerIp;
+    public static NGOManager Instance { get; private set; }
 
-    private (string, ushort) GetServerAddress()
+    [SerializeField] private NetworkManager net;
+    private ServerSearcher udp;
+    private Action<NetworkEndPoint> onServerFound;
+
+    [Header("デバッグ表示用")]
+    [SerializeField] private NetworkEndPoint currentServerEndPoint;
+    [SerializeField] private NetworkEndPoint currentRemoteEndPoint;
+
+    private void Awake()
     {
-        // "127.0.0.1:7777"という形式
-        var serverAddress = txtServerIp.text;
-        var serverAddressSplit = serverAddress.Split(':');
-        var serverIp = serverAddressSplit[0];
-        var serverPort = ushort.Parse(serverAddressSplit[1]);
-        return (serverIp, serverPort);
+        Instance = this;
     }
 
-    private bool SetConnectionData()
+    void Start()
     {
         try
         {
-            if (NetworkManager.Singleton.TryGetComponent<UnityTransport>(out var trans))
-            {
-                var (addr, port) = GetServerAddress();
-                trans.SetConnectionData(addr, port);
-                return true;
-            }
-            Debug.LogError("UnityTransport not found!");
-            return false;
+            udp = new ServerSearcher();
+            udp.Receive += Udp_Receive;
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
-            Debug.LogError($"Invalid Server Address! ({txtServerIp.text}) {ex}");
-            return false;
+            Debug.Log("UDP初期化エラー: " + ex.ToString());
+        }
+
+        net.OnServerStarted += Net_OnServerStarted;
+        net.OnServerStopped += Net_OnServerStopped;
+        net.OnClientStarted += Net_OnClientStarted;
+        net.OnClientStopped += Net_OnClientStopped;
+        net.OnClientConnectedCallback += Net_OnClientConnectedCallback;
+        net.OnClientDisconnectCallback += Net_OnClientDisconnectCallback;
+    }
+
+    private void Udp_Receive(object sender, ServerSearcher.Data e)
+    {
+        if (e.type == ServerSearcher.MessageType.SearchServer)
+        {
+            if (net.IsHost)
+            {
+                Debug.Log("サーバー情報要求を受信しました。");
+                var addresses = ServerSearcher.GetLocalIPAddressList();
+                Debug.Log("自身のIPアドレス: " + string.Join(", ", addresses.Select(x => x.ToString())));
+                var address = addresses.FirstOrDefault();
+                Debug.Log("サーバー情報を送信します: " + address.ToString());
+#pragma warning disable CS0618 // 型またはメンバーが旧型式です
+                udp.Send(new ServerSearcher.Data
+                {
+                    type = ServerSearcher.MessageType.SearchServerResponse,
+                    clientId = e.clientId,
+                    serverIpv4Address = address.Address,
+                    serverIpv4Port = currentServerEndPoint.Port,
+                });
+#pragma warning restore CS0618 // 型またはメンバーが旧型式です
+            }
+        }
+        if (e.type == ServerSearcher.MessageType.SearchServerResponse)
+        {
+            var addr = new IPAddress(e.serverIpv4Address);
+            var endpoint = NetworkEndPoint.Parse(addr.ToString(), e.serverIpv4Port);
+            Debug.Log($"サーバー情報を受信しました。{addr}:{e.serverIpv4Port}");
+            onServerFound?.Invoke(endpoint);
         }
     }
 
-
-    public void OnClickStartHost()
+    private void Net_OnServerStarted()
     {
-        if (!SetConnectionData()) return;
-        NetworkManager.Singleton.StartHost();
+        Debug.Log($"NGO EVENT サーバー開始({currentServerEndPoint})");
     }
 
-    public void OnClickStartServer()
+    private void Net_OnServerStopped(bool obj)
     {
-        if (!SetConnectionData()) return;
-        NetworkManager.Singleton.StartServer();
+        Debug.Log($"NGO EVENT サーバー停止({currentServerEndPoint})");
     }
 
-    public void OnClickStartClient()
+    private void Net_OnClientStarted()
     {
-        if (!SetConnectionData()) return;
-        NetworkManager.Singleton.StartClient();
-        //StartCoroutine(StartClientCoroutine());
+        Debug.Log($"NGO EVENT クライアント開始({currentRemoteEndPoint})");
     }
 
-    //private IEnumerator StartClientCoroutine()
-    //{
-    //    yield return new WaitForSeconds(1f);
-    //}
-
-    // Start is called before the first frame update
-    void Start()
+    private void Net_OnClientStopped(bool obj)
     {
-        NetworkManager.Singleton.OnClientConnectedCallback += OnOnClientConnectedCallback;
-        NetworkManager.Singleton.OnClientDisconnectCallback += OnOnClientDisconnectCallback;
+        Debug.Log($"NGO EVENT クライアント停止({currentRemoteEndPoint})");
     }
 
-    private void OnOnClientConnectedCallback(ulong obj)
+    private void Net_OnClientConnectedCallback(ulong clientId)
     {
-        gameObject.SetActive(false);
+        Debug.Log($"NGO EVENT クライアント接続({clientId})");
     }
 
-    private void OnOnClientDisconnectCallback(ulong obj)
+    private void Net_OnClientDisconnectCallback(ulong clientId)
     {
-        gameObject.SetActive(true);
+        Debug.Log($"NGO EVENT クライアント切断({clientId})");
+    }
+
+
+    public void StartServer(NetworkEndPoint endpoint)
+    {
+        net.TryGetComponent<UnityTransport>(out var trans);
+        if (trans == null) throw new Exception("UnityTransportが見つかりません。");
+        
+        currentServerEndPoint = endpoint;
+        Debug.Log($"サーバーを開始します。{endpoint}");
+        trans.SetConnectionData(endpoint);
+        net.StartHost();
+    }
+
+    public void SearchServer(Action<NetworkEndPoint> onServerFound)
+    {
+        this.onServerFound = onServerFound;
+        Debug.Log($"サーバー情報要求を送信します。{udp}");
+        if (udp == null)
+        {
+            udp.Send(new ServerSearcher.Data
+            {
+                type = ServerSearcher.MessageType.SearchServer,
+            });
+            Debug.Log("サーバー情報要求を送信しました。");
+        }
+    }
+
+    public void StartClient(NetworkEndPoint endpoint)
+    {
+        net.TryGetComponent<UnityTransport>(out var trans);
+        if (trans == null) throw new Exception("UnityTransportが見つかりません。");
+
+        currentRemoteEndPoint = endpoint;
+        Debug.Log($"接続を開始します。{endpoint}");
+        trans.SetConnectionData(endpoint);
+        net.StartClient();
+    }
+
+    public void Shutdown()
+    {
+        net.Shutdown();
     }
 
     private void OnDestroy()
     {
-        var manager = NetworkManager.Singleton;
-        if (manager != null)
+        if (net != null)
         {
-            manager.OnClientConnectedCallback -= OnOnClientConnectedCallback;
-            manager.OnClientDisconnectCallback -= OnOnClientDisconnectCallback;
-            manager.Shutdown();
+            net.Shutdown();
+        }
+        if (udp != null)
+        {
+            udp.Dispose();
         }
     }
 }
