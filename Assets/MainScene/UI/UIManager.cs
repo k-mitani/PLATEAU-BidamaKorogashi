@@ -187,19 +187,6 @@ public class UIManager : MonoBehaviour
         player.EndWatch();
     }
 
-    public void OnGravityResetClick()
-    {
-        Debug.Log("Reset Gravity!");
-        var bdama = GameManager.Instance.PlayerBdama;
-        if (bdama == null) return;
-        bdama.UpdateGravityDirection(Vector3.down);
-    }
-
-    public void OnVelocityResetClick()
-    {
-        GameManager.Instance.ResetVelocity();
-    }
-
     public void OnJumpClick(float time)
     {
         var bdama = GameManager.Instance.PlayerBdama;
