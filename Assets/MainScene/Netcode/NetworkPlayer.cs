@@ -12,6 +12,16 @@ public class NetworkPlayer : NetworkBehaviour
     [NonSerialized] public NetworkVariable<int> colorIndex = new(0, writePerm: NetworkVariableWritePermission.Owner);
     [NonSerialized] public NetworkVariable<NetworkPlayerMode> mode = new(NetworkPlayerMode.None);
 
+    [NonSerialized] public WatchMode watchMode = WatchMode.None;
+    [NonSerialized] public int watchPlayerIndex = 0;
+    public enum WatchMode
+    {
+        None,
+        DividedDisplay,
+        FreeCamera,
+        Player,
+    }
+
     public IEnumerable<BDama> BDamas => GameManager.Instance.FindBDamasAll(OwnerClientId);
 
     private void Awake()
@@ -60,6 +70,33 @@ public class NetworkPlayer : NetworkBehaviour
         }
     }
 
+    [ServerRpc]
+    public void StartWatchServerRpc()
+    {
+        if (mode.Value != NetworkPlayerMode.None)
+        {
+            Debug.LogWarning($"観戦モード開始できません ({mode.Value})");
+            return;
+        }
+        mode.Value = NetworkPlayerMode.Watch;
+    }
+
+    public void EndWatch()
+    {
+        GameManager.Instance.vcam.enabled = true;
+        EndWatchServerRpc();
+    }
+
+    [ServerRpc]
+    private void EndWatchServerRpc()
+    {
+        if (mode.Value != NetworkPlayerMode.Watch)
+        {
+            Debug.LogWarning("観戦モードではありません");
+            return;
+        }
+        mode.Value = NetworkPlayerMode.None;
+    }
 
     private void ColorIndex_OnValueChanged(int previousValue, int newValue)
     {
@@ -74,6 +111,26 @@ public class NetworkPlayer : NetworkBehaviour
     {
         var mat = UIManager.Instance.playerColors[colorIndex.Value];
         bdama.SetMaterial(mat);
+    }
+
+    internal void WatchPlayer(int index)
+    {
+        watchMode = WatchMode.Player;
+        watchPlayerIndex = index;
+        GameManager.Instance.vcam.enabled = true;
+        GameManager.Instance.UpdateWatchPlayer();
+    }
+
+    internal void WatchByDividedDisplay()
+    {
+        watchMode = WatchMode.DividedDisplay;
+        GameManager.Instance.vcam.enabled = true;
+    }
+
+    internal void WatchByFreeCamera()
+    {
+        watchMode = WatchMode.FreeCamera;
+        GameManager.Instance.vcam.enabled = false;
     }
 }
 

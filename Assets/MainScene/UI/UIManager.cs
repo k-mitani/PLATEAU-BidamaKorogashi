@@ -151,12 +151,40 @@ public class UIManager : MonoBehaviour
 
     public void WatchSettingOnClickStart()
     {
+        var player = GameManager.Instance.LocalPlayer;
+        if (player == null)
+        {
+            watchSettingLog.text = $"{DateTime.Now:HH:mm:ss} サーバーと接続されていません。";
+            return;
+        }
+        if (player.mode.Value == NetworkPlayerMode.None)
+        {
+            player.StartWatchServerRpc();
+            //panelPlayerSetting.SetActive(false);
+        }
 
+        if (player.mode.Value == NetworkPlayerMode.Watch)
+        {
+            if (radioWatchModeDivide.isOn) WatchByDividedDisplay();
+            else if (radioWatchModeFree.isOn) WatchByFreeCamera();
+            else if (radioWatchModePlayer.isOn) WatchPlayer(dropdownWatchPlayer.value);
+        }
     }
 
     public void WatchSettingOnClickEnd()
     {
-
+        var player = GameManager.Instance.LocalPlayer;
+        if (player == null)
+        {
+            watchSettingLog.text = $"{DateTime.Now:HH:mm:ss} サーバーと接続されていません。";
+            return;
+        }
+        if (player.mode.Value != NetworkPlayerMode.Watch)
+        {
+            watchSettingLog.text = $"{DateTime.Now:HH:mm:ss} 観戦モード中ではありません。";
+            return;
+        }
+        player.EndWatch();
     }
 
     public void OnGravityResetClick()
@@ -201,8 +229,58 @@ public class UIManager : MonoBehaviour
         rankingItems = rankingParent.transform.GetComponentsInChildren<RankingItem>(true);
     }
 
+    private void WatchPlayer(int index)
+    {
+        var player = GameManager.Instance.LocalPlayer;
+        if (player != null && player.mode.Value == NetworkPlayerMode.Watch)
+        {
+            player.WatchPlayer(index);
+            radioWatchModePlayer.isOn = true;
+            dropdownWatchPlayer.value = index;
+        }
+    }
+
+    private void WatchByDividedDisplay()
+    {
+        var player = GameManager.Instance.LocalPlayer;
+        if (player != null && player.mode.Value == NetworkPlayerMode.Watch)
+        {
+            player.WatchByDividedDisplay();
+            radioWatchModeDivide.isOn = true;
+        }
+    }
+
+    private void WatchByFreeCamera()
+    {
+        var player = GameManager.Instance.LocalPlayer;
+        if (player != null && player.mode.Value == NetworkPlayerMode.Watch)
+        {
+            player.WatchByFreeCamera();
+            radioWatchModeFree.isOn = true;
+        }
+    }
+
     private void Update()
     {
+        var player = GameManager.Instance.LocalPlayer;
+        if (player != null && player.mode.Value == NetworkPlayerMode.Watch)
+        {
+            // 1-9が押されたら、そのプレーヤーを観戦する。
+            if (Keyboard.current.digit1Key.wasPressedThisFrame) WatchPlayer(0);
+            else if (Keyboard.current.digit2Key.wasPressedThisFrame) WatchPlayer(1);
+            else if (Keyboard.current.digit3Key.wasPressedThisFrame) WatchPlayer(2);
+            else if (Keyboard.current.digit4Key.wasPressedThisFrame) WatchPlayer(3);
+            else if (Keyboard.current.digit5Key.wasPressedThisFrame) WatchPlayer(4);
+            else if (Keyboard.current.digit6Key.wasPressedThisFrame) WatchPlayer(5);
+            else if (Keyboard.current.digit7Key.wasPressedThisFrame) WatchPlayer(6);
+            else if (Keyboard.current.digit8Key.wasPressedThisFrame) WatchPlayer(7);
+            else if (Keyboard.current.digit9Key.wasPressedThisFrame) WatchPlayer(8);
+            // 0が押されたら、画面分割にする。
+            else if (Keyboard.current.digit0Key.wasPressedThisFrame) WatchByDividedDisplay();
+            // -が押されたら、自由視点にする。
+            else if (Keyboard.current.minusKey.wasPressedThisFrame) WatchByFreeCamera();
+        }
+
         var bdama = GameManager.Instance.PlayerBdama;
         if (bdama == null) return;
 

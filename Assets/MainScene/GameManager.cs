@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool needLoadMapDataScene = true;
     [SerializeField] private AssetReference refMapDataScene;
 
-    [SerializeField] CinemachineVirtualCamera vcam;
+    [SerializeField] public CinemachineVirtualCamera vcam;
     private CinemachineTransposer transposer;
 
     [SerializeField] private NetworkGameState networkGameStatePrefab;
@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
     [Header("デバッグ用")]
     [SerializeField] private List<NetworkPlayer> players = new();
     [field: SerializeField] public NetworkPlayer LocalPlayer { get; private set; }
-    [SerializeField] private List<BDama> bdamas = new();
+    [SerializeField] public List<BDama> bdamas = new();
     [field: SerializeField] public BDama PlayerBdama { get; private set; }
 
     private void Awake()
@@ -103,6 +103,14 @@ public class GameManager : MonoBehaviour
             PlayerBdama = bdama;
             vcam.Follow = PlayerBdama.transform;
         }
+        else
+        {
+            if (LocalPlayer.mode.Value == NetworkPlayerMode.Watch &&
+                LocalPlayer.watchMode == NetworkPlayer.WatchMode.Player)
+            {
+                UpdateWatchPlayer();
+            }
+        }
     }
 
     public void OnBDamaDespawned(BDama bdama)
@@ -113,6 +121,22 @@ public class GameManager : MonoBehaviour
         {
             PlayerBdama = null;
             vcam.Follow = null;
+        }
+        else if (vcam.Follow == bdama)
+        {
+            if (LocalPlayer.mode.Value == NetworkPlayerMode.Watch &&
+                LocalPlayer.watchMode == NetworkPlayer.WatchMode.Player)
+            {
+                UpdateWatchPlayer();
+            }
+        }
+    }
+
+    internal void UpdateWatchPlayer()
+    {
+        if (LocalPlayer.watchPlayerIndex <= bdamas.Count)
+        {
+            vcam.Follow = bdamas[LocalPlayer.watchPlayerIndex].transform;
         }
     }
 

@@ -13380,11 +13380,21 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: Option A
+    - m_Text: Player 1
       m_Image: {fileID: 0}
-    - m_Text: Option B
+    - m_Text: Player 2
       m_Image: {fileID: 0}
-    - m_Text: Option C
+    - m_Text: Player 3
+      m_Image: {fileID: 0}
+    - m_Text: Player 4
+      m_Image: {fileID: 0}
+    - m_Text: Player 5
+      m_Image: {fileID: 0}
+    - m_Text: Player 6
+      m_Image: {fileID: 0}
+    - m_Text: Player 7
+      m_Image: {fileID: 0}
+    - m_Text: Player 8
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
@@ -13978,11 +13988,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 618b0e3f6c65dd247a4a016150006c57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_LookSpeedController: 120
-  m_LookSpeedMouse: 4
-  m_MoveSpeed: 10
-  m_MoveSpeedIncrement: 2.5
-  m_Turbo: 10
+  m_LookSpeedController: 180
+  m_LookSpeedMouse: 6
+  m_MoveSpeed: 200
+  m_MoveSpeedIncrement: 50
+  m_Turbo: 200
 --- !u!114 &1797418850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15813,7 +15823,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Option A
+  m_text: Player 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3ad15631833c34345889536a25852648, type: 2}
   m_sharedMaterial: {fileID: -5235231865207658863, guid: 3ad15631833c34345889536a25852648,
