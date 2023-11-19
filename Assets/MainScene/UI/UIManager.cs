@@ -27,6 +27,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject panelDebug;
     [SerializeField] private TextMeshProUGUI textDebug;
     [SerializeField] public bool debugMode = false;
+    [Header("ランキングUI")]
+    [SerializeField] private GameObject rankingParent;
+    [NonSerialized] public RankingItem[] rankingItems;
     [Header("プレーヤー設定UI")]
     [SerializeField] public Material[] playerColors;
     [SerializeField] private TMP_Dropdown inputPlayerColor;
@@ -195,6 +198,7 @@ public class UIManager : MonoBehaviour
     {
         Instance = this;
         panelMenu.SetActive(false);
+        rankingItems = rankingParent.transform.GetComponentsInChildren<RankingItem>(true);
     }
 
     private void Update()

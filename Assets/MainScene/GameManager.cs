@@ -126,33 +126,62 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.3f);
-            if (state == null) continue;
+
+            // 準備ができていないならランキング表を隠す。
+            if (state == null || state.targetLocation == null)
+            {
+                foreach (var item in UIManager.Instance.rankingItems)
+                {
+                    if (item.gameObject.activeSelf) item.gameObject.SetActive(false);
+                }
+                continue;
+            }
+
+            // 順位表を作る。
             var targetLocation = state.targetLocation;
-            if (targetLocation == null) continue;
-            if (PlayerBdama == null) continue;
-            var bdama = PlayerBdama;
+            var orderedBdamas = bdamas.Select(bdama => {
+                var bdamaXZ = new Vector3(bdama.transform.position.x, 0, bdama.transform.position.z);
+                var targetXZ = new Vector3(targetLocation.position.x, 0, targetLocation.position.z);
+                var distance = Vector3.Distance(bdamaXZ, targetXZ);
 
-            var bdamaXZ = new Vector3(bdama.transform.position.x, 0, bdama.transform.position.z);
-            var targetXZ = new Vector3(targetLocation.position.x, 0, targetLocation.position.z);
-            var distance = Vector3.Distance(bdamaXZ, targetXZ);
+                var direction = targetXZ - bdamaXZ;
+                var angle = Vector3.SignedAngle(Vector3.forward, direction, Vector3.up);
+                return new { bdama, distance, angle, };
+            }).OrderBy(x => x.distance).ToArray();
 
-            var direction = targetXZ - bdamaXZ;
-            var angle = Vector3.SignedAngle(Vector3.forward, direction, Vector3.up);
+            var items = UIManager.Instance.rankingItems;
+            for (var i = 0; i < items.Length; i++)
+            {
+                var item = items[i];
+                if (orderedBdamas.Length <= i)
+                {
+                    if (item.gameObject.activeSelf) item.gameObject.SetActive(false);
+                    continue;
+                }
+                if (!item.gameObject.activeSelf) item.gameObject.SetActive(true);
+                var rankItem = orderedBdamas[i];
+                var bdama = rankItem.bdama;
+                var distance = rankItem.distance;
+                var angle = rankItem.angle;
+                item.UpdateUI(i, bdama, distance);
+                if (bdama == PlayerBdama)
+                {
+                    var START = -22.5f;
+                    var DIFF = 360 / 8;
+                    var text = angle.ToString("N0");
+                    if (angle > START + DIFF * 0 && angle < START + DIFF * 1) text = "北";
+                    else if (angle > START + DIFF * 1 && angle < START + DIFF * 2) text = "北東";
+                    else if (angle > START + DIFF * 2 && angle < START + DIFF * 3) text = "東";
+                    else if (angle > START + DIFF * 3 && angle < START + DIFF * 4) text = "南東";
+                    else if (angle > START + DIFF * 4 && angle < START + DIFF * 5) text = "南";
+                    else if (angle + 360 > START + DIFF * 4 && angle + 360 < START + DIFF * 5) text = "南";
+                    else if (angle + 360 > START + DIFF * 5 && angle + 360 < START + DIFF * 6) text = "南西";
+                    else if (angle + 360 > START + DIFF * 6 && angle + 360 < START + DIFF * 7) text = "西";
+                    else if (angle + 360 > START + DIFF * 7 && angle + 360 < START + DIFF * 8) text = "北西";
 
-            var START = -22.5f;
-            var DIFF = 360 / 8;
-            var text = angle.ToString("N0");
-            if (angle > START + DIFF * 0 && angle < START + DIFF * 1) text = "北";
-            else if (angle > START + DIFF * 1 && angle < START + DIFF * 2) text = "北東";
-            else if (angle > START + DIFF * 2 && angle < START + DIFF * 3) text = "東";
-            else if (angle > START + DIFF * 3 && angle < START + DIFF * 4) text = "南東";
-            else if (angle > START + DIFF * 4 && angle < START + DIFF * 5) text = "南";
-            else if (angle + 360 > START + DIFF * 4 && angle + 360 < START + DIFF * 5) text = "南";
-            else if (angle + 360 > START + DIFF * 5 && angle + 360 < START + DIFF * 6) text = "南西";
-            else if (angle + 360 > START + DIFF * 6 && angle + 360 < START + DIFF * 7) text = "西";
-            else if (angle + 360 > START + DIFF * 7 && angle + 360 < START + DIFF * 8) text = "北西";
-
-            UIManager.Instance.UpdateDistance(distance, text, angle);
+                    UIManager.Instance.UpdateDistance(distance, text, angle);
+                }
+            }
         }
     }
 

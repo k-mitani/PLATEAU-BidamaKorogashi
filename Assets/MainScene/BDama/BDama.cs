@@ -8,6 +8,7 @@ public class BDama : NetworkBehaviour
 {
     [NonSerialized] public NetworkPlayer player;
     [NonSerialized] public Rigidbody rb;
+    [NonSerialized] public MeshRenderer meshRenderer;
     [NonSerialized] public Vector3 initialPosition = Vector3.zero;
     [SerializeField] private float jumpForceMax = 100;
     [SerializeField] public float jumpForceTimeMax = 5;
@@ -33,12 +34,13 @@ public class BDama : NetworkBehaviour
 
     public void SetMaterial(Material mat)
     {
-        GetComponent<MeshRenderer>().material = mat;
+        meshRenderer.material = mat;
     }
 
     private void Awake()
     {
         TryGetComponent(out rb);
+        TryGetComponent(out meshRenderer);
         initialPosition = transform.position;
     }
 
