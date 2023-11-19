@@ -85,6 +85,7 @@ public class NetworkPlayer : NetworkBehaviour
     {
         GameManager.Instance.vcam.enabled = true;
         EndWatchServerRpc();
+        GameManager.Instance.UpdateDividedDisplay();
     }
 
     [ServerRpc]
@@ -117,6 +118,7 @@ public class NetworkPlayer : NetworkBehaviour
     {
         watchMode = WatchMode.Player;
         watchPlayerIndex = index;
+        GameManager.Instance.UpdateDividedDisplay();
         GameManager.Instance.vcam.enabled = true;
         GameManager.Instance.UpdateWatchPlayer();
     }
@@ -125,12 +127,15 @@ public class NetworkPlayer : NetworkBehaviour
     {
         watchMode = WatchMode.DividedDisplay;
         GameManager.Instance.vcam.enabled = true;
+        GameManager.Instance.UpdateDividedDisplay();
     }
 
     internal void WatchByFreeCamera()
     {
         watchMode = WatchMode.FreeCamera;
+        GameManager.Instance.UpdateDividedDisplay();
         GameManager.Instance.vcam.enabled = false;
+
     }
 }
 

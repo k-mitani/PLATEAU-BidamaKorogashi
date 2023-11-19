@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AssetReference refMapDataScene;
 
     [SerializeField] public CinemachineVirtualCamera vcam;
-    private CinemachineTransposer transposer;
+    [SerializeField] public Camera[] subcams;
+    [SerializeField] public CinemachineVirtualCamera[] subvcams;
 
     [SerializeField] private NetworkGameState networkGameStatePrefab;
     private NetworkGameState state;
@@ -35,7 +36,6 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
 
-        transposer = vcam.GetCinemachineComponent<CinemachineTransposer>();
 
         // 必要ならマップデータシーンを読み込む。
         if (needLoadMapDataScene)
@@ -110,6 +110,11 @@ public class GameManager : MonoBehaviour
             {
                 UpdateWatchPlayer();
             }
+            else if (LocalPlayer.mode.Value == NetworkPlayerMode.Watch &&
+                               LocalPlayer.watchMode == NetworkPlayer.WatchMode.DividedDisplay)
+            {
+                UpdateDividedDisplay();
+            }
         }
     }
 
@@ -129,6 +134,11 @@ public class GameManager : MonoBehaviour
             {
                 UpdateWatchPlayer();
             }
+        }
+        if (LocalPlayer.mode.Value == NetworkPlayerMode.Watch &&
+            LocalPlayer.watchMode == NetworkPlayer.WatchMode.DividedDisplay)
+        {
+            UpdateDividedDisplay();
         }
     }
 
@@ -219,5 +229,72 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Reset Velocity!");
         PlayerBdama.rb.velocity = Vector3.zero;
+    }
+
+    internal void UpdateDividedDisplay()
+    {
+        // 一旦通常状態に戻す。
+        foreach (var cam in subcams) cam.gameObject.SetActive(false);
+        foreach (var vcam in subvcams) vcam.gameObject.SetActive(false);
+        Camera.main.rect = new Rect(0, 0, 1, 1);
+
+        var player = LocalPlayer;
+        // 通常のカメラ表示なら
+        if (player.mode.Value != NetworkPlayerMode.Watch || player.watchMode != NetworkPlayer.WatchMode.DividedDisplay)
+        {
+            return;
+        }
+        // 分割表示なら
+        var playerCount = bdamas.Count;
+        if (playerCount == 0) return;
+        if (playerCount == 1)
+        {
+            vcam.Follow = bdamas[0].transform;
+            return;
+        }
+        else if (playerCount == 2)
+        {
+            Camera.main.rect = new Rect(0, 0.5f, 1, 0.5f);
+            vcam.Follow = bdamas[0].transform;
+            subcams[0].gameObject.SetActive(true);
+            subvcams[0].gameObject.SetActive(true);
+            subcams[0].rect = new Rect(0, 0, 1, 0.5f);
+            subvcams[0].Follow = bdamas[1].transform;
+        }
+        else if (playerCount == 3)
+        {
+            Camera.main.rect = new Rect(0, 0.5f, 1, 0.5f);
+            vcam.Follow = bdamas[0].transform;
+            
+            subcams[0].gameObject.SetActive(true);
+            subvcams[0].gameObject.SetActive(true);
+            subcams[0].rect = new Rect(0, 0, 0.5f, 0.5f);
+            subvcams[0].Follow = bdamas[1].transform;
+            
+            subcams[1].gameObject.SetActive(true);
+            subvcams[1].gameObject.SetActive(true);
+            subcams[1].rect = new Rect(0.5f, 0, 0.5f, 0.5f);
+            subvcams[1].Follow = bdamas[2].transform;
+        }
+        else
+        {
+            Camera.main.rect = new Rect(0, 0.5f, 0.5f, 0.5f);
+            vcam.Follow = bdamas[0].transform;
+            
+            subcams[0].gameObject.SetActive(true);
+            subvcams[0].gameObject.SetActive(true);
+            subcams[0].rect = new Rect(0, 0, 0.5f, 0.5f);
+            subvcams[0].Follow = bdamas[1].transform;
+            
+            subcams[1].gameObject.SetActive(true);
+            subvcams[1].gameObject.SetActive(true);
+            subcams[1].rect = new Rect(0.5f, 0, 0.5f, 0.5f);
+            subvcams[1].Follow = bdamas[2].transform;
+            
+            subcams[2].gameObject.SetActive(true);
+            subvcams[2].gameObject.SetActive(true);
+            subcams[2].rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);
+            subvcams[2].Follow = bdamas[3].transform;
+        }
     }
 }
