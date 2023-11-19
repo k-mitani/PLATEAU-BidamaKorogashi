@@ -59,8 +59,18 @@ public class BDama : NetworkBehaviour
         if (other.CompareTag("Goal"))
         {
             Debug.Log("Goal!");
-            GameManager.Instance.OnGoal();
+            if (IsOwner)
+            {
+                player.score.Value++;
+                OnGoalServerRpc();
+            }
         }
+    }
+
+    [ServerRpc]
+    private void OnGoalServerRpc()
+    {
+        GameManager.Instance.OnGoal();
     }
 
     internal void UpdateGravityDirection(Vector3 vector3)

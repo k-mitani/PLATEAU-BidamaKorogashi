@@ -8,7 +8,7 @@ using UnityEngine;
 public class NetworkPlayer : NetworkBehaviour
 {
     [SerializeField] private BDama bdamaPrefab;
-    [NonSerialized] public NetworkVariable<int> score = new(0);
+    [NonSerialized] public NetworkVariable<int> score = new(0, writePerm: NetworkVariableWritePermission.Owner);
     [NonSerialized] public NetworkVariable<int> colorIndex = new(0, writePerm: NetworkVariableWritePermission.Owner);
     [NonSerialized] public NetworkVariable<NetworkPlayerMode> mode = new(NetworkPlayerMode.None);
 

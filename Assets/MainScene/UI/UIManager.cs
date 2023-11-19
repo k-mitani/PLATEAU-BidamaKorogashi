@@ -63,7 +63,7 @@ public class UIManager : MonoBehaviour
         var bdama = GameManager.Instance.PlayerBdama;
         bdama.transform.position = bdama.initialPosition;
         bdama.rb.velocity = Vector3.zero;
-        OnGravityResetClick();
+        bdama.UpdateGravityDirection(Vector3.down);
     }
 
     public void OnResetTargetLocationClick()
@@ -305,14 +305,6 @@ public class UIManager : MonoBehaviour
             OnJumpClick(bdama.jumpForceTimeMax / 2);
             buttonJumpPressing = false;
             buttonTextJump.text = "ジャンプ";
-        }
-        else if (Keyboard.current.cKey.isPressed)
-        {
-            OnGravityResetClick();
-        }
-        else if (Keyboard.current.vKey.isPressed)
-        {
-            OnVelocityResetClick();
         }
         else
         {
