@@ -28,8 +28,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textDebug;
     [SerializeField] public bool debugMode = false;
     [Header("プレーヤー設定UI")]
-    [SerializeField] private TMP_InputField inputPlayerColor;
+    [SerializeField] public Material[] playerColors;
+    [SerializeField] private TMP_Dropdown inputPlayerColor;
     [SerializeField] private TextMeshProUGUI playerSettingLog;
+    [SerializeField] private int selectedColorIndex;
     [Header("観戦設定UI")]
     [SerializeField] private Toggle radioWatchModeDivide;
     [SerializeField] private Toggle radioWatchModeFree;
@@ -94,17 +96,26 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void PlayerSettingOnClickChangeColor()
+    public void PlayerSettingOnChangeColor(int selectedIndex)
     {
-        var color = Color.white;
-        if (ColorUtility.TryParseHtmlString(inputPlayerColor.text, out color))
-        {
-            GameManager.Instance.PlayerBdama.GetComponent<MeshRenderer>().material.color = color;
-        }
+        UpdateLocalPlayerColor();
     }
 
-    public void PlayerSettingOnClickChangeColorRandomly()
+    public void UpdateLocalPlayerColor()
     {
+        var index = inputPlayerColor.value - 1;
+        // -1ならランダムに割り振る。
+        if (index == -1)
+        {
+            index = UnityEngine.Random.Range(0, playerColors.Length);
+        }
+        selectedColorIndex = index;
+        var player = GameManager.Instance.LocalPlayer;
+        if (player != null)
+        {
+            player.colorIndex.Value = selectedColorIndex;
+            Debug.Log("プレーヤーカラーセット！ " + selectedColorIndex);
+        }
     }
 
     public void PlayerSettingOnClickStart()
@@ -285,4 +296,5 @@ public class UIManager : MonoBehaviour
         textDestination.text = targetLocation.name;
         textDescription.text = targetLocation.description;
     }
+
 }

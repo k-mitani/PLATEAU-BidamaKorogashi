@@ -8,12 +8,12 @@ public class NetworkPlayer : NetworkBehaviour
 {
     [SerializeField] private BDama bdamaPrefab;
     [NonSerialized] public NetworkVariable<int> score;
-    [NonSerialized] public NetworkVariable<Color> color;
+    [NonSerialized] public NetworkVariable<int> colorIndex;
 
     private void Awake()
     {
         score = new NetworkVariable<int>(0);
-        color = new NetworkVariable<Color>(Color.red);
+        colorIndex = new NetworkVariable<int>(0);
     }
 
     public override void OnNetworkSpawn()

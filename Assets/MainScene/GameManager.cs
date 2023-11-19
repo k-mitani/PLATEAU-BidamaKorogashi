@@ -25,8 +25,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] public GameObject goal;
 
     [Header("デバッグ用")]
-    [SerializeField] private NetworkPlayer localPlayer;
     [SerializeField] private List<NetworkPlayer> players = new();
+    [field: SerializeField] public NetworkPlayer LocalPlayer { get; private set; }
 
 
     public BDama PlayerBdama { get; private set; }
@@ -68,11 +68,16 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerSpawned(NetworkPlayer player)
     {
-        Debug.Log($"{TAG} Player Spawned!");
         players.Add(player);
         if (player.IsLocalPlayer)
         {
-            localPlayer = player;
+            Debug.Log($"{TAG} Player Spawned! (Local)");
+            LocalPlayer = player;
+            UIManager.Instance.UpdateLocalPlayerColor();
+        }
+        else
+        {
+            Debug.Log($"{TAG} Player Spawned! (Remote)");
         }
     }
 
@@ -82,7 +87,7 @@ public class GameManager : MonoBehaviour
         players.Remove(player);
         if (player.IsLocalPlayer)
         {
-            localPlayer = null;
+            LocalPlayer = null;
         }
     }
 
