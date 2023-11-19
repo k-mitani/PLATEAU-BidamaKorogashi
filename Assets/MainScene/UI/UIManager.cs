@@ -23,10 +23,20 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textAngle;
 
     [SerializeField] private UIManagerNGO ngo;
+    [SerializeField] private GameObject panelPlayerSetting;
     [SerializeField] private GameObject panelDebug;
     [SerializeField] private TextMeshProUGUI textDebug;
     [SerializeField] public bool debugMode = false;
-
+    [Header("プレーヤー設定UI")]
+    [SerializeField] private TMP_InputField inputPlayerColor;
+    [SerializeField] private TextMeshProUGUI playerSettingLog;
+    [Header("観戦設定UI")]
+    [SerializeField] private Toggle radioWatchModeDivide;
+    [SerializeField] private Toggle radioWatchModeFree;
+    [SerializeField] private Toggle radioWatchModePlayer;
+    [SerializeField] private TMP_Dropdown dropdownWatchPlayer;
+    [SerializeField] private TextMeshProUGUI watchSettingLog;
+    [Header("スマホ用")]
     [SerializeField] private float mobileJumpAccelerationMagnitudeDiffrenceThreshold = 3;
     [SerializeField] private float mobileJumpForceAdjustment = 0.15f;
     [SerializeField] private float mobileJumpCoolTimeMax = 0.5f;
@@ -69,6 +79,11 @@ public class UIManager : MonoBehaviour
         ngo.ToggleVisibility();
     }
 
+    public void OnPlayerSettingToggleClick()
+    {
+        panelPlayerSetting.SetActive(!panelPlayerSetting.activeSelf);
+    }
+
     public void OnFreeCameraToggleClick()
     {
 
@@ -76,6 +91,40 @@ public class UIManager : MonoBehaviour
 
     public void OnLookTargetLocationClick()
     {
+    }
+
+
+    public void PlayerSettingOnClickChangeColor()
+    {
+        var color = Color.white;
+        if (ColorUtility.TryParseHtmlString(inputPlayerColor.text, out color))
+        {
+            GameManager.Instance.PlayerBdama.GetComponent<MeshRenderer>().material.color = color;
+        }
+    }
+
+    public void PlayerSettingOnClickChangeColorRandomly()
+    {
+    }
+
+    public void PlayerSettingOnClickStart()
+    {
+
+    }
+
+    public void PlayerSettingOnClickEnd()
+    {
+
+    }
+
+    public void WatchSettingOnClickStart()
+    {
+
+    }
+
+    public void WatchSettingOnClickEnd()
+    {
+
     }
 
     public void OnGravityResetClick()
