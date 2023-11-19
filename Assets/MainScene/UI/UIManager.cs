@@ -126,12 +126,24 @@ public class UIManager : MonoBehaviour
             playerSettingLog.text = $"{DateTime.Now:HH:mm:ss} サーバーと接続されていません。";
             return;
         }
-        player.StartBDamaGame();
+        player.StartBDamaGameServerRpc();
+        panelPlayerSetting.SetActive(false);
     }
 
     public void PlayerSettingOnClickEnd()
     {
-
+        var player = GameManager.Instance.LocalPlayer;
+        if (player == null)
+        {
+            playerSettingLog.text = $"{DateTime.Now:HH:mm:ss} サーバーと接続されていません。";
+            return;
+        }
+        if (player.mode.Value != NetworkPlayerMode.BDama)
+        {
+            playerSettingLog.text = $"{DateTime.Now:HH:mm:ss} ビー玉モード中ではありません。";
+            return;
+        }
+        player.EndBDamaGameServerRpc();
     }
 
     public void WatchSettingOnClickStart()

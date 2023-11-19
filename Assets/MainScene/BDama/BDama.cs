@@ -18,13 +18,17 @@ public class BDama : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        Debug.Log("BDama Spawned!");
         GameManager.Instance.OnBDamaSpawned(this);
         player.OnBDamaSpawned(this);
         if (IsOwner)
         {
             gravity.Value = gravityAmountAdjustment * gravityAmountNormal * Vector3.down;
         }
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        GameManager.Instance.OnBDamaDespawned(this);
     }
 
     public void SetMaterial(Material mat)
