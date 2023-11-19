@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class BDama : NetworkBehaviour
 {
+    [NonSerialized] public NetworkPlayer player;
     [NonSerialized] public Rigidbody rb;
     [NonSerialized] public Vector3 initialPosition = Vector3.zero;
     [SerializeField] private float jumpForceMax = 100;
@@ -14,25 +15,22 @@ public class BDama : NetworkBehaviour
     [SerializeField] private float gravityAmountNormal = 9.81f;
     public NetworkVariable<Vector3> gravity = new(Vector3.zero, writePerm: NetworkVariableWritePermission.Owner);
 
+
     public override void OnNetworkSpawn()
     {
         Debug.Log("BDama Spawned!");
-        if (IsLocalPlayer)
+        GameManager.Instance.OnBDamaSpawned(this);
+        player.OnBDamaSpawned(this);
+        if (IsOwner)
         {
-            GameManager.Instance.OnPlayerBdamaSpawned(this);
-            Debug.Log("Set Owner!");
-            SetOwnerServerRpc();
             gravity.Value = gravityAmountAdjustment * gravityAmountNormal * Vector3.down;
         }
     }
 
-    [ServerRpc]
-    public void SetOwnerServerRpc(ServerRpcParams rpcParams = default)
+    public void SetMaterial(Material mat)
     {
-        Debug.Log("Sever Set Owner!");
-        GetComponent<NetworkObject>().ChangeOwnership(rpcParams.Receive.SenderClientId);
+        GetComponent<MeshRenderer>().material = mat;
     }
-
 
     private void Awake()
     {

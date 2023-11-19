@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
@@ -27,9 +28,8 @@ public class GameManager : MonoBehaviour
     [Header("デバッグ用")]
     [SerializeField] private List<NetworkPlayer> players = new();
     [field: SerializeField] public NetworkPlayer LocalPlayer { get; private set; }
-
-
-    public BDama PlayerBdama { get; private set; }
+    [SerializeField] private List<BDama> bdamas = new();
+    [field: SerializeField] public BDama PlayerBdama { get; private set; }
 
     private void Awake()
     {
@@ -42,6 +42,8 @@ public class GameManager : MonoBehaviour
         {
             Addressables.LoadSceneAsync(refMapDataScene, LoadSceneMode.Additive);
         }
+
+        StartCoroutine(UpdateDistanceLoop());
     }
 
     /// <summary>
@@ -91,29 +93,46 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OnPlayerBdamaSpawned(BDama b)
+    public void OnBDamaSpawned(BDama bdama)
     {
-        PlayerBdama = b;
-        vcam.Follow = PlayerBdama.transform;
-        StartCoroutine(UpdateDistanceLoop());
+        Debug.Log($"{TAG} BDama Spawned!");
+        bdama.player = FindPlayer(bdama.OwnerClientId);
+        bdamas.Add(bdama);
+        if (bdama.IsOwner)
+        {
+            PlayerBdama = bdama;
+            vcam.Follow = PlayerBdama.transform;
+        }
     }
+
+    public void OnBDamaDespawned(BDama bdama)
+    {
+        Debug.Log($"{TAG} BDama Despawned!");
+        bdamas.Remove(bdama);
+        if (bdama == PlayerBdama)
+        {
+            PlayerBdama = null;
+            vcam.Follow = null;
+        }
+    }
+
+    public BDama FindBDama(ulong ownerId) => bdamas.Find(b => b.OwnerClientId == ownerId);
+    public IEnumerable<BDama> FindBDamasAll(ulong ownerId) => bdamas.Where(b => b.OwnerClientId == ownerId);
+    public NetworkPlayer FindPlayer(ulong ownerId) => players.Find(b => b.OwnerClientId == ownerId);
+    public IEnumerable<NetworkPlayer> FindPlayersAll(ulong ownerId) => players.Where(b => b.OwnerClientId == ownerId);
 
     private IEnumerator UpdateDistanceLoop()
     {
         while (true)
         {
             yield return new WaitForSeconds(0.3f);
-            if (state == null)
-            {
-                Debug.Log("notfound");
-                state = GameObject.FindObjectOfType<NetworkGameState>();
-                continue;
-            }
+            if (state == null) continue;
             var targetLocation = state.targetLocation;
             if (targetLocation == null) continue;
+            if (PlayerBdama == null) continue;
+            var bdama = PlayerBdama;
 
-
-            var bdamaXZ = new Vector3(PlayerBdama.transform.position.x, 0, PlayerBdama.transform.position.z);
+            var bdamaXZ = new Vector3(bdama.transform.position.x, 0, bdama.transform.position.z);
             var targetXZ = new Vector3(targetLocation.position.x, 0, targetLocation.position.z);
             var distance = Vector3.Distance(bdamaXZ, targetXZ);
 

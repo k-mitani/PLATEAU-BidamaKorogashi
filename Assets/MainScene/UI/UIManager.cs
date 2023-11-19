@@ -120,7 +120,13 @@ public class UIManager : MonoBehaviour
 
     public void PlayerSettingOnClickStart()
     {
-
+        var player = GameManager.Instance.LocalPlayer;
+        if (player == null)
+        {
+            playerSettingLog.text = $"{DateTime.Now:HH:mm:ss} サーバーと接続されていません。";
+            return;
+        }
+        player.StartBDamaGame();
     }
 
     public void PlayerSettingOnClickEnd()

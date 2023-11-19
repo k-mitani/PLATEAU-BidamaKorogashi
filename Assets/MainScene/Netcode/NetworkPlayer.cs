@@ -7,13 +7,12 @@ using UnityEngine;
 public class NetworkPlayer : NetworkBehaviour
 {
     [SerializeField] private BDama bdamaPrefab;
-    [NonSerialized] public NetworkVariable<int> score;
-    [NonSerialized] public NetworkVariable<int> colorIndex;
+    [NonSerialized] public NetworkVariable<int> score = new(0);
+    [NonSerialized] public NetworkVariable<int> colorIndex = new(0, writePerm: NetworkVariableWritePermission.Owner);
 
     private void Awake()
     {
-        score = new NetworkVariable<int>(0);
-        colorIndex = new NetworkVariable<int>(0);
+        colorIndex.OnValueChanged += ColorIndex_OnValueChanged;
     }
 
     public override void OnNetworkSpawn()
@@ -28,4 +27,30 @@ public class NetworkPlayer : NetworkBehaviour
         GameManager.Instance.OnPlayerDespawned(this);
     }
 
+    public void StartBDamaGame()
+    {
+        CreateBDamaServerRpc();
+    }
+
+    [ServerRpc]
+    public void CreateBDamaServerRpc(ServerRpcParams rpcParams = default)
+    {
+        var bdama = Instantiate(bdamaPrefab);
+        bdama.GetComponent<NetworkObject>().SpawnWithOwnership(rpcParams.Receive.SenderClientId);
+    }
+
+    private void ColorIndex_OnValueChanged(int previousValue, int newValue)
+    {
+        var mat = UIManager.Instance.playerColors[colorIndex.Value];
+        foreach (var bdama in GameManager.Instance.FindBDamasAll(OwnerClientId))
+        {
+            bdama.SetMaterial(mat);
+        }
+    }
+
+    internal void OnBDamaSpawned(BDama bdama)
+    {
+        var mat = UIManager.Instance.playerColors[colorIndex.Value];
+        bdama.SetMaterial(mat);
+    }
 }
