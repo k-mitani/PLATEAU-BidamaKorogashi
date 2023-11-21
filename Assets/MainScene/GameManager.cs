@@ -109,7 +109,7 @@ public class GameManager : MonoBehaviour
             PlayerBdama = bdama;
             vcam.Follow = PlayerBdama.transform;
         }
-        else
+        else if (LocalPlayer != null)
         {
             if (LocalPlayer.mode.Value == NetworkPlayerMode.Watch &&
                 LocalPlayer.watchMode == NetworkPlayer.WatchMode.Player)
