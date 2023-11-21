@@ -27,6 +27,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject panelDebug;
     [SerializeField] private TextMeshProUGUI textDebug;
     [SerializeField] public bool debugMode = false;
+    [Header("ゴールUI")]
+    [SerializeField] public GameObject panelGoal;
+    [SerializeField] public TextMeshProUGUI textGoalPlayer;
+    [SerializeField] public TextMeshProUGUI textGoalPlayerCongraturation;
+    [SerializeField] public GameObject panelNext;
+    [SerializeField] public TextMeshProUGUI textNextDestination;
+    [SerializeField] public TextMeshProUGUI textNextDestinationType;
     [Header("カメラ設定UI")]
     [SerializeField] private Slider sliderCameraTilt;
     [SerializeField] private Slider sliderCameraZoom;
@@ -102,7 +109,7 @@ public class UIManager : MonoBehaviour
 
     public void OnResetTargetLocationClick()
     {
-        // TODO
+        GameManager.Instance.PlayerBdama.OnGoalServerRpc();
         //GameManager.Instance.OnStageStart();
     }
 

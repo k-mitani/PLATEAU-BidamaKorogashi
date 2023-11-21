@@ -220,10 +220,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    internal void OnGoal()
+    public void OnGoal(BDama bdama)
     {
-        // TODO
-        state.OnStageStart();
+        state.OnGoal(bdama);
     }
 
     internal void ResetVelocity()

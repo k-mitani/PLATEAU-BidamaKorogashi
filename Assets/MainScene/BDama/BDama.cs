@@ -61,16 +61,22 @@ public class BDama : NetworkBehaviour
             Debug.Log("Goal!");
             if (IsOwner)
             {
-                player.score.Value++;
                 OnGoalServerRpc();
             }
         }
     }
 
     [ServerRpc]
-    private void OnGoalServerRpc()
+    public void OnGoalServerRpc()
     {
-        GameManager.Instance.OnGoal();
+        Debug.Log("server 誰かゴールしたらしい" + OwnerClientId.ToString());
+        GameManager.Instance.OnGoal(this);
+    }
+
+    [ClientRpc]
+    private void OnGoalClientRpc()
+    {
+        Debug.Log("client 誰かゴールしたらしい" + OwnerClientId.ToString());
     }
 
     internal void UpdateGravityDirection(Vector3 vector3)
