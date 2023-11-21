@@ -71,7 +71,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc12e38d5d07aa9438850a2daf9f1f30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForceMax: 40000
+  jumpForceMax: 10000
   jumpForceTimeMax: 2
   gravityAmountAdjustment: 20
   gravityAmountNormal: 9.81

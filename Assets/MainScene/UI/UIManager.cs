@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject panelMenu;
     [SerializeField] private TextMeshProUGUI textDistance;
     [SerializeField] private TextMeshProUGUI textDirection;
-    [SerializeField] private JumpButton buttonJump;
+    [SerializeField] public JumpButton buttonJump;
     [SerializeField] private TextMeshProUGUI buttonTextJump;
     [SerializeField] private TextMeshProUGUI textDestination;
     [SerializeField] private TextMeshProUGUI textDescription;
@@ -57,8 +57,8 @@ public class UIManager : MonoBehaviour
     [Header("スマホ用")]
     [SerializeField] private float mobileJumpAccelerationMagnitudeDiffrenceThreshold = 3;
     [SerializeField] private float mobileJumpForceAdjustment = 0.15f;
-    [SerializeField] private float mobileJumpCoolTimeMax = 0.5f;
-    [SerializeField] private float mobileJumpCoolTime = 0f;
+    [SerializeField] public float mobileJumpCoolTimeMax = 0.5f;
+    [SerializeField] public float mobileJumpCoolTime = 0f;
 
     private bool collectData = false;
 
@@ -235,17 +235,20 @@ public class UIManager : MonoBehaviour
 
     public void OnJumpClick(float time)
     {
+        if (mobileJumpCoolTime > 0) return;
         var bdama = GameManager.Instance.PlayerBdama;
+        if (bdama == null) return;
         bdama.Jump(time);
     }
 
 
     public void OnJumpClick()
     {
-        // Android版でなければ何もしない。
-        if (Application.platform != RuntimePlatform.Android) return;
-
+        //// Android版でなければ何もしない。
+        //if (Application.platform != RuntimePlatform.Android) return;
+        if (mobileJumpCoolTime > 0) return;
         var bdama = GameManager.Instance.PlayerBdama;
+        if (bdama == null) return;
         bdama.Jump(bdama.jumpForceTimeMax / mobileJumpForceAdjustment);
     }
 
@@ -317,38 +320,38 @@ public class UIManager : MonoBehaviour
         var bdama = GameManager.Instance.PlayerBdama;
         if (bdama == null) return;
 
-        var prevPressed = buttonJumpPressing;
-        var prevTime = buttonJumpPressingTime;
-        if (buttonJump.pressing)
-        {
-            buttonJumpPressing = true;
-            if (!prevPressed)
-            {
-                buttonJumpPressingTime = 0;
-            }
-            else
-            {
-                buttonJumpPressingTime += Time.deltaTime;
-                var power = Mathf.Min((int)(buttonJumpPressingTime * 10), bdama.jumpForceTimeMax * 10);
-                if ((int)(prevTime * 10) < power)
-                {
-                    buttonTextJump.text = $"ジャンプ\n({power})";
-                }
-            }
-        }
-        else
-        {
-            if (prevPressed)
-            {
-                OnJumpClick(buttonJumpPressingTime);
-                buttonJumpPressing = false;
-                buttonTextJump.text = "ジャンプ";
-            }
-        }
+        //var prevPressed = buttonJumpPressing;
+        //var prevTime = buttonJumpPressingTime;
+        //if (buttonJump.pressing)
+        //{
+        //    buttonJumpPressing = true;
+        //    if (!prevPressed)
+        //    {
+        //        buttonJumpPressingTime = 0;
+        //    }
+        //    else
+        //    {
+        //        buttonJumpPressingTime += Time.deltaTime;
+        //        var power = Mathf.Min((int)(buttonJumpPressingTime * 10), bdama.jumpForceTimeMax * 10);
+        //        if ((int)(prevTime * 10) < power)
+        //        {
+        //            buttonTextJump.text = $"ジャンプ\n({power})";
+        //        }
+        //    }
+        //}
+        //else
+        //{
+        //    if (prevPressed)
+        //    {
+        //        OnJumpClick(buttonJumpPressingTime);
+        //        buttonJumpPressing = false;
+        //        buttonTextJump.text = "ジャンプ";
+        //    }
+        //}
 
         if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            OnJumpClick(bdama.jumpForceTimeMax / 2);
+            OnJumpClick();
             buttonJumpPressing = false;
             buttonTextJump.text = "ジャンプ";
         }
@@ -400,12 +403,15 @@ public class UIManager : MonoBehaviour
             {
                 var bdama = GameManager.Instance.PlayerBdama;
                 bdama.Jump(accelerationDiff * bdama.jumpForceTimeMax / mobileJumpForceAdjustment);
-                mobileJumpCoolTime = mobileJumpCoolTimeMax;
             }
         }
         if (mobileJumpCoolTime > 0)
         {
             mobileJumpCoolTime -= Time.fixedDeltaTime;
+            if (mobileJumpCoolTime <= 0)
+            {
+                buttonJump.GetComponent<Button>().interactable = true;
+            }
         }
     }
 

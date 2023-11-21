@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BDama : NetworkBehaviour
 {
@@ -49,6 +51,20 @@ public class BDama : NetworkBehaviour
         var force = Mathf.Lerp(0, jumpForceMax, time / jumpForceTimeMax);
         Debug.Log(time / jumpForceTimeMax);
         rb.AddForce(Vector3.up * force, ForceMode.Impulse);
+
+        UIManager.Instance.buttonJump.GetComponent<Button>().interactable = false;
+        UIManager.Instance.mobileJumpCoolTime = UIManager.Instance.mobileJumpCoolTimeMax;
+        StartCoroutine(UpdateButtonText());
+        IEnumerator UpdateButtonText()
+        {
+            var text = UIManager.Instance.buttonJump.GetComponentInChildren<TextMeshProUGUI>();
+            while (UIManager.Instance.mobileJumpCoolTime > 0)
+            {
+                text.text = $"ジャンプ\n({UIManager.Instance.mobileJumpCoolTime.ToString("0.0")})";
+                yield return new WaitForSeconds(0.1f);
+            }
+            text.text = $"ジャンプ";
+        }
     }
 
     private void OnTriggerEnter(Collider other)
