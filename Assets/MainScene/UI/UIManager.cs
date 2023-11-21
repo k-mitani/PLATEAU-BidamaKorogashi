@@ -402,7 +402,10 @@ public class UIManager : MonoBehaviour
             if (mobileJumpCoolTime <= 0)
             {
                 var bdama = GameManager.Instance.PlayerBdama;
-                bdama.Jump(accelerationDiff * bdama.jumpForceTimeMax / mobileJumpForceAdjustment);
+                if (bdama != null)
+                {
+                    bdama.Jump(accelerationDiff * bdama.jumpForceTimeMax / mobileJumpForceAdjustment);
+                }
             }
         }
         if (mobileJumpCoolTime > 0)
