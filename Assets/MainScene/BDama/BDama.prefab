@@ -73,7 +73,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpForceMax: 40000
   jumpForceTimeMax: 2
-  gravityAmountAdjustment: 50
+  gravityAmountAdjustment: 20
   gravityAmountNormal: 9.81
   gravity:
     m_InternalValue: {x: -0, y: 490.50003, z: -0}
