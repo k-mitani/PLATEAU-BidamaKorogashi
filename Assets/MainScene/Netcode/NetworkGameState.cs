@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
-using static ServerSearcher;
 
 public class NetworkGameState : NetworkBehaviour
 {
@@ -90,7 +89,7 @@ public class NetworkGameState : NetworkBehaviour
         }
 
         // ステージを開始する。
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(4f);
         OnStageStart();
     }
 

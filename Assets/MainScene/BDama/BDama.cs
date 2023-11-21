@@ -9,7 +9,6 @@ public class BDama : NetworkBehaviour
     [NonSerialized] public NetworkPlayer player;
     [NonSerialized] public Rigidbody rb;
     [NonSerialized] public MeshRenderer meshRenderer;
-    [NonSerialized] public Vector3 initialPosition = Vector3.zero;
     [SerializeField] private float jumpForceMax = 100;
     [SerializeField] public float jumpForceTimeMax = 5;
     [SerializeField] private float gravityAmountAdjustment = 30;
@@ -41,7 +40,6 @@ public class BDama : NetworkBehaviour
     {
         TryGetComponent(out rb);
         TryGetComponent(out meshRenderer);
-        initialPosition = transform.position;
     }
 
     public void Jump(float time)
@@ -73,12 +71,6 @@ public class BDama : NetworkBehaviour
         GameManager.Instance.OnGoal(this);
     }
 
-    [ClientRpc]
-    private void OnGoalClientRpc()
-    {
-        Debug.Log("client 誰かゴールしたらしい" + OwnerClientId.ToString());
-    }
-
     internal void UpdateGravityDirection(Vector3 vector3)
     {
         gravity.Value = gravityAmountAdjustment * gravityAmountNormal * vector3;
@@ -87,5 +79,21 @@ public class BDama : NetworkBehaviour
     private void FixedUpdate()
     {
         rb.AddForce(gravity.Value, ForceMode.Acceleration);
+    }
+
+    [ServerRpc]
+    public void ResetServerRpc()
+    {
+        Reset();
+    }
+
+    public void Reset()
+    {
+        rb.velocity = Vector3.zero;
+        UpdateGravityDirection(Vector3.down);
+        transform.position = GameManager.Instance.initialBDamaPosition.transform.position + new Vector3(
+            UnityEngine.Random.value * 30,
+            UnityEngine.Random.value * 100,
+            UnityEngine.Random.value * 30);
     }
 }

@@ -102,22 +102,32 @@ public class UIManager : MonoBehaviour
     public void OnResetBDamaClick()
     {
         var bdama = GameManager.Instance.PlayerBdama;
-        bdama.transform.position = bdama.initialPosition;
-        bdama.rb.velocity = Vector3.zero;
-        bdama.UpdateGravityDirection(Vector3.down);
+        if (bdama.IsHost) bdama.Reset();
+        else bdama.ResetServerRpc();
     }
+
+    public void OnResetBDamaAllClick()
+    {
+        GameManager.Instance.LocalPlayer.RequestResetBDamaAllServerRpc();
+    }
+
+    public void OnResetScoreAllClick()
+    {
+        GameManager.Instance.LocalPlayer.RequestResetScoreAllServerRpc();
+    }
+
 
     public void OnResetTargetLocationClick()
     {
-        GameManager.Instance.PlayerBdama.OnGoalServerRpc();
-        //GameManager.Instance.OnStageStart();
+        GameManager.Instance.LocalPlayer.RequestStageStartServerRpc();
     }
 
     public void OnDebugToggleClick()
     {
-        debugMode = !debugMode;
-        panelDebug.SetActive(debugMode);
-        textDebug.text = "";
+        GameManager.Instance.PlayerBdama.OnGoalServerRpc();
+        //debugMode = !debugMode;
+        //panelDebug.SetActive(debugMode);
+        //textDebug.text = "";
     }
 
     public void OnNetworkToggleClick()
@@ -128,11 +138,6 @@ public class UIManager : MonoBehaviour
     public void OnPlayerSettingToggleClick()
     {
         panelPlayerSetting.SetActive(!panelPlayerSetting.activeSelf);
-    }
-
-    public void OnFreeCameraToggleClick()
-    {
-
     }
 
     public void OnLookTargetLocationClick()

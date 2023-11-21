@@ -23,12 +23,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] public CinemachineVirtualCamera[] subvcams;
 
     [SerializeField] private NetworkGameState networkGameStatePrefab;
-    private NetworkGameState state;
+    [NonSerialized] public NetworkGameState state;
 
     [SerializeField] public GameObject goal;
+    [SerializeField] public GameObject initialBDamaPosition;
 
     [Header("デバッグ用")]
-    [SerializeField] private List<NetworkPlayer> players = new();
+    [SerializeField] public List<NetworkPlayer> players = new();
     [field: SerializeField] public NetworkPlayer LocalPlayer { get; private set; }
     [SerializeField] public List<BDama> bdamas = new();
     [field: SerializeField] public BDama PlayerBdama { get; private set; }
@@ -98,6 +99,10 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log($"{TAG} BDama Spawned!");
         bdama.player = FindPlayer(bdama.OwnerClientId);
+        bdama.transform.position = initialBDamaPosition.transform.position + new Vector3(
+            UnityEngine.Random.value * 30,
+            UnityEngine.Random.value * 100,
+            UnityEngine.Random.value * 30);
         bdamas.Add(bdama);
         if (bdama.IsOwner)
         {

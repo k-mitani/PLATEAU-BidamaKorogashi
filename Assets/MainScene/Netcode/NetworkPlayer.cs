@@ -138,6 +138,35 @@ public class NetworkPlayer : NetworkBehaviour
         GameManager.Instance.vcam.enabled = false;
 
     }
+
+    [ServerRpc]
+    internal void RequestStageStartServerRpc()
+    {
+        GameManager.Instance.state.OnStageStart();
+    }
+
+    [ServerRpc]
+    internal void RequestResetBDamaAllServerRpc()
+    {
+        var bdamas = GameManager.Instance.bdamas.ToArray();
+        for (int i = 0; i < bdamas.Length; i++)
+        {
+            var bdama = bdamas[i];
+            bdama.Reset();
+        }
+    }
+
+    [ServerRpc]
+    internal void RequestResetScoreAllServerRpc()
+    {
+        var players = GameManager.Instance.players.ToArray();
+        for (int i = 0; i < players.Length; i++)
+        {
+            var player = players[i];
+            player.score.Value = 0;
+        }
+
+    }
 }
 
 public enum NetworkPlayerMode : byte
