@@ -17,7 +17,7 @@ public class RankingItem : MonoBehaviour
     {
         rankText.text = $"{rank + 1}位";
         bdamaImage.color = bdama.meshRenderer.material.color;
-        scoreText.text = $"({bdama.player.score.Value})";
+        scoreText.text = $"({bdama.player.score.Value}点)";
         distanceText.text = $"{distance:0}m";
     }
 }
