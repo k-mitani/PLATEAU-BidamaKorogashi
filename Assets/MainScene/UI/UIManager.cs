@@ -27,6 +27,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject panelDebug;
     [SerializeField] private TextMeshProUGUI textDebug;
     [SerializeField] public bool debugMode = false;
+    [Header("カメラ設定UI")]
+    [SerializeField] private Slider sliderCameraTilt;
+    [SerializeField] private Slider sliderCameraZoom;
     [Header("ランキングUI")]
     [SerializeField] private GameObject rankingParent;
     [NonSerialized] public RankingItem[] rankingItems;
@@ -52,6 +55,34 @@ public class UIManager : MonoBehaviour
 
     private bool buttonJumpPressing = false;
     private float buttonJumpPressingTime = 0f;
+
+    private float? defaultDistance = null;
+    public void OnCameraTiltChange(float value)
+    {
+        UpdateCameraSetting();
+    }
+
+    public void OnCameraZoomChange(float value)
+    {
+        UpdateCameraSetting();
+    }
+
+    private void UpdateCameraSetting()
+    {
+        var gm = GameManager.Instance;
+        var transposer = gm.vcam.GetCinemachineComponent<CinemachineTransposer>();
+        if (defaultDistance == null)
+        {
+            defaultDistance = transposer.m_FollowOffset.magnitude;
+        }
+        var zoom = sliderCameraZoom.value;
+        var tilt = (sliderCameraTilt.value - 0.5f) * Mathf.PI;
+        var x = Mathf.Sin(tilt);
+        var y = Mathf.Cos(tilt);
+        transposer.m_FollowOffset = defaultDistance.Value * zoom * new Vector3(0, y, x);
+        //gm.vcam.transform.LookAt(gm.vcam.Follow);
+        gm.vcam.transform.rotation = Quaternion.Euler(180 * sliderCameraTilt.value, 0, 0);
+    }
 
     public void OnMenuToggleClick()
     {
