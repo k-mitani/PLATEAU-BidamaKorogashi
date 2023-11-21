@@ -33,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 2605800598214708626}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -48, y: 100, z: 461}
-  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_LocalScale: {x: 7.5, y: 7.5, z: 7.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 390584471
+  GlobalObjectIdHash: 4146315804
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -73,7 +73,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpForceMax: 10000
   jumpForceTimeMax: 2
-  gravityAmountAdjustment: 20
+  gravityAmountAdjustment: 35
   gravityAmountNormal: 9.81
   gravity:
     m_InternalValue: {x: -0, y: 490.50003, z: -0}
@@ -138,7 +138,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.25
+  m_Radius: 0.375
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &2605800598214708621
 Rigidbody:
