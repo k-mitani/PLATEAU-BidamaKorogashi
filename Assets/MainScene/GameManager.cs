@@ -8,6 +8,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -236,7 +237,20 @@ public class GameManager : MonoBehaviour
         // 一旦通常状態に戻す。
         foreach (var cam in subcams) cam.gameObject.SetActive(false);
         foreach (var vcam in subvcams) vcam.gameObject.SetActive(false);
+        UIManager.Instance.DividerFor2.SetActive(false);
+        UIManager.Instance.DividerFor3.SetActive(false);
+        UIManager.Instance.DividerFor4.SetActive(false);
         Camera.main.rect = new Rect(0, 0, 1, 1);
+
+        void ActivateDivider(GameObject container, string name, BDama bdama)
+        {
+            container.SetActive(true);
+            var t = container.transform.Find(name);
+            if (t == null) return;
+            var image = t.GetComponent<Image>();
+            if (image == null) return;
+            image.color = UIManager.Instance.playerColors[bdama.player.colorIndex.Value].color;
+        }
 
         var player = LocalPlayer;
         // 通常のカメラ表示なら
@@ -254,8 +268,10 @@ public class GameManager : MonoBehaviour
         }
         else if (playerCount == 2)
         {
+            ActivateDivider(UIManager.Instance.DividerFor2, "P1H", bdamas[0]);
             Camera.main.rect = new Rect(0, 0.5f, 1, 0.5f);
             vcam.Follow = bdamas[0].transform;
+            ActivateDivider(UIManager.Instance.DividerFor2, "P2H", bdamas[1]);
             subcams[0].gameObject.SetActive(true);
             subvcams[0].gameObject.SetActive(true);
             subcams[0].rect = new Rect(0, 0, 1, 0.5f);
@@ -263,14 +279,19 @@ public class GameManager : MonoBehaviour
         }
         else if (playerCount == 3)
         {
+            ActivateDivider(UIManager.Instance.DividerFor3, "P1H", bdamas[0]);
             Camera.main.rect = new Rect(0, 0.5f, 1, 0.5f);
             vcam.Follow = bdamas[0].transform;
-            
+
+            ActivateDivider(UIManager.Instance.DividerFor3, "P2H", bdamas[1]);
+            ActivateDivider(UIManager.Instance.DividerFor3, "P2V", bdamas[1]);
             subcams[0].gameObject.SetActive(true);
             subvcams[0].gameObject.SetActive(true);
             subcams[0].rect = new Rect(0, 0, 0.5f, 0.5f);
             subvcams[0].Follow = bdamas[1].transform;
-            
+
+            ActivateDivider(UIManager.Instance.DividerFor3, "P3H", bdamas[2]);
+            ActivateDivider(UIManager.Instance.DividerFor3, "P3V", bdamas[2]);
             subcams[1].gameObject.SetActive(true);
             subvcams[1].gameObject.SetActive(true);
             subcams[1].rect = new Rect(0.5f, 0, 0.5f, 0.5f);
@@ -278,19 +299,27 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            ActivateDivider(UIManager.Instance.DividerFor4, "P1H", bdamas[0]);
+            ActivateDivider(UIManager.Instance.DividerFor4, "P1V", bdamas[0]);
             Camera.main.rect = new Rect(0, 0.5f, 0.5f, 0.5f);
             vcam.Follow = bdamas[0].transform;
-            
+
+            ActivateDivider(UIManager.Instance.DividerFor4, "P2H", bdamas[1]);
+            ActivateDivider(UIManager.Instance.DividerFor4, "P2V", bdamas[1]);
             subcams[0].gameObject.SetActive(true);
             subvcams[0].gameObject.SetActive(true);
             subcams[0].rect = new Rect(0, 0, 0.5f, 0.5f);
             subvcams[0].Follow = bdamas[1].transform;
-            
+
+            ActivateDivider(UIManager.Instance.DividerFor4, "P3H", bdamas[2]);
+            ActivateDivider(UIManager.Instance.DividerFor4, "P3V", bdamas[2]);
             subcams[1].gameObject.SetActive(true);
             subvcams[1].gameObject.SetActive(true);
             subcams[1].rect = new Rect(0.5f, 0, 0.5f, 0.5f);
             subvcams[1].Follow = bdamas[2].transform;
-            
+
+            ActivateDivider(UIManager.Instance.DividerFor4, "P4H", bdamas[3]);
+            ActivateDivider(UIManager.Instance.DividerFor4, "P4V", bdamas[3]);
             subcams[2].gameObject.SetActive(true);
             subvcams[2].gameObject.SetActive(true);
             subcams[2].rect = new Rect(0.5f, 0.5f, 0.5f, 0.5f);

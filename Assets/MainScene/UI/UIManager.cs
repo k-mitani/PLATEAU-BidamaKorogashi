@@ -44,6 +44,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Toggle radioWatchModePlayer;
     [SerializeField] private TMP_Dropdown dropdownWatchPlayer;
     [SerializeField] private TextMeshProUGUI watchSettingLog;
+    [SerializeField] public GameObject DividerFor4;
+    [SerializeField] public GameObject DividerFor3;
+    [SerializeField] public GameObject DividerFor2;
     [Header("スマホ用")]
     [SerializeField] private float mobileJumpAccelerationMagnitudeDiffrenceThreshold = 3;
     [SerializeField] private float mobileJumpForceAdjustment = 0.15f;

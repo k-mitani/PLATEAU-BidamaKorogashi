@@ -106,6 +106,7 @@ public class NetworkPlayer : NetworkBehaviour
         {
             bdama.SetMaterial(mat);
         }
+        GameManager.Instance.UpdateDividedDisplay();
     }
 
     internal void OnBDamaSpawned(BDama bdama)
