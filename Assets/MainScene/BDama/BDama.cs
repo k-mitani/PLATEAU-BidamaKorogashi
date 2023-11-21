@@ -50,12 +50,12 @@ public class BDama : NetworkBehaviour
         time = Mathf.Clamp(time, 0, jumpForceTimeMax);
         var force = Mathf.Lerp(0, jumpForceMax, time / jumpForceTimeMax);
         Debug.Log(time / jumpForceTimeMax);
-        rb.AddForce(Vector3.up * force, ForceMode.Impulse);
 
+        JumpServerRpc(force);
         UIManager.Instance.buttonJump.GetComponent<Button>().interactable = false;
         UIManager.Instance.mobileJumpCoolTime = UIManager.Instance.mobileJumpCoolTimeMax;
         StartCoroutine(UpdateButtonText());
-        IEnumerator UpdateButtonText()
+        static IEnumerator UpdateButtonText()
         {
             var text = UIManager.Instance.buttonJump.GetComponentInChildren<TextMeshProUGUI>();
             while (UIManager.Instance.mobileJumpCoolTime > 0)
@@ -65,6 +65,13 @@ public class BDama : NetworkBehaviour
             }
             text.text = $"ジャンプ";
         }
+    }
+
+    [ServerRpc]
+    private void JumpServerRpc(float force)
+    {
+        Debug.Log("JumpServerRpc! " + force);
+        rb.AddForce(Vector3.up * force, ForceMode.Impulse);
     }
 
     private void OnTriggerEnter(Collider other)
