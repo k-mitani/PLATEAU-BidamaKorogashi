@@ -13458,7 +13458,7 @@ MonoBehaviour:
   DividerFor2: {fileID: 1933741147}
   mobileJumpAccelerationMagnitudeDiffrenceThreshold: 0.8
   mobileJumpForceAdjustment: 0
-  mobileJumpCoolTimeMax: 3
+  mobileJumpCoolTimeMax: 2
   mobileJumpCoolTime: 0
 --- !u!4 &1445623468
 Transform:
