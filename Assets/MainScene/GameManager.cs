@@ -230,12 +230,6 @@ public class GameManager : MonoBehaviour
         state.OnGoal(bdama);
     }
 
-    internal void ResetVelocity()
-    {
-        Debug.Log("Reset Velocity!");
-        PlayerBdama.rb.velocity = Vector3.zero;
-    }
-
     internal void UpdateDividedDisplay()
     {
         // 一旦通常状態に戻す。

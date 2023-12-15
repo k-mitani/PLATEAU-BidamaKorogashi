@@ -51,7 +51,7 @@ public class BDama : NetworkBehaviour
         var force = Mathf.Lerp(0, jumpForceMax, time / jumpForceTimeMax);
         Debug.Log(time / jumpForceTimeMax);
 
-        JumpServerRpc(force);
+        rb.AddForce(Vector3.up * force, ForceMode.Impulse);
         UIManager.Instance.buttonJump.GetComponent<Button>().interactable = false;
         UIManager.Instance.mobileJumpCoolTime = UIManager.Instance.mobileJumpCoolTimeMax;
         StartCoroutine(UpdateButtonText());
@@ -65,13 +65,6 @@ public class BDama : NetworkBehaviour
             }
             text.text = $"ジャンプ";
         }
-    }
-
-    [ServerRpc]
-    private void JumpServerRpc(float force)
-    {
-        Debug.Log("JumpServerRpc! " + force);
-        rb.AddForce(Vector3.up * force, ForceMode.Impulse);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -105,20 +98,16 @@ public class BDama : NetworkBehaviour
     }
 
     [ServerRpc]
-    public void ResetServerRpc()
+    public void ResetStateServerRpc(Vector3 pos)
     {
-        Reset();
+        ResetState(pos);
     }
 
-    public void Reset()
+    // サーバー専用
+    public void ResetState(Vector3 pos)
     {
-        rb.velocity = Vector3.zero;
-        transform.position = GameManager.Instance.initialBDamaPosition.transform.position + new Vector3(
-            UnityEngine.Random.value * 30,
-            UnityEngine.Random.value * 100,
-            UnityEngine.Random.value * 30);
-        
-        UpdateGravityDirectionClientRpc(Vector3.down, new ClientRpcParams()
+        Debug.Log("Reset!");
+        ResetClientRpc(pos, Vector3.down, new ClientRpcParams()
         {
             Send = new ClientRpcSendParams()
             {
@@ -128,8 +117,13 @@ public class BDama : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void UpdateGravityDirectionClientRpc(Vector3 dir, ClientRpcParams clientRpcParams = default)
+    public void ResetClientRpc(Vector3 pos, Vector3 dir, ClientRpcParams clientRpcParams = default)
     {
+        rb.velocity = Vector3.zero;
+        transform.position = pos + new Vector3(
+            UnityEngine.Random.value * 30,
+            UnityEngine.Random.value * 100,
+            UnityEngine.Random.value * 30);
         UpdateGravityDirection(dir);
     }
 }

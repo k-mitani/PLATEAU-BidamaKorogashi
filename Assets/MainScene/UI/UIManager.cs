@@ -102,8 +102,7 @@ public class UIManager : MonoBehaviour
     public void OnResetBDamaClick()
     {
         var bdama = GameManager.Instance.PlayerBdama;
-        if (bdama.IsHost) bdama.Reset();
-        else bdama.ResetServerRpc();
+        bdama.ResetStateServerRpc(GameManager.Instance.initialBDamaPosition.transform.position);
     }
 
     public void OnResetBDamaAllClick()

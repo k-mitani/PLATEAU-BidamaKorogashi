@@ -152,7 +152,7 @@ public class NetworkPlayer : NetworkBehaviour
         for (int i = 0; i < bdamas.Length; i++)
         {
             var bdama = bdamas[i];
-            bdama.Reset();
+            bdama.ResetState(GameManager.Instance.initialBDamaPosition.transform.position);
         }
     }
 

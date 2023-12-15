@@ -81,11 +81,7 @@ public class NetworkGameState : NetworkBehaviour
         {
             var b = GameManager.Instance.bdamas[i];
             if (winner == b) continue;
-            b.rb.velocity = Vector3.zero;
-            b.transform.position = winner.transform.position + new Vector3(
-                UnityEngine.Random.value * 100,
-                200 + UnityEngine.Random.value * 100,
-                UnityEngine.Random.value * 100);
+            b.ResetState(winner.transform.position + Vector3.up * 200);
         }
 
         // ステージを開始する。
