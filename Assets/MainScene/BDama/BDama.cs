@@ -113,10 +113,23 @@ public class BDama : NetworkBehaviour
     public void Reset()
     {
         rb.velocity = Vector3.zero;
-        UpdateGravityDirection(Vector3.down);
         transform.position = GameManager.Instance.initialBDamaPosition.transform.position + new Vector3(
             UnityEngine.Random.value * 30,
             UnityEngine.Random.value * 100,
             UnityEngine.Random.value * 30);
+        
+        UpdateGravityDirectionClientRpc(Vector3.down, new ClientRpcParams()
+        {
+            Send = new ClientRpcSendParams()
+            {
+                TargetClientIds = new[] { OwnerClientId }
+            }
+        });
+    }
+
+    [ClientRpc]
+    public void UpdateGravityDirectionClientRpc(Vector3 dir, ClientRpcParams clientRpcParams = default)
+    {
+        UpdateGravityDirection(dir);
     }
 }
