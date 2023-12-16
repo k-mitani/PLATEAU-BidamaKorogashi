@@ -96,6 +96,11 @@ public class UIManager : MonoBehaviour
 
     public void OnMenuToggleClick()
     {
+        if (!panelMenu.activeSelf)
+        {
+            if (ngo.IsVisible) ngo.ToggleVisibility();
+            panelPlayerSetting.SetActive(false);
+        }
         panelMenu.SetActive(!panelMenu.activeSelf);
     }
 
@@ -131,11 +136,21 @@ public class UIManager : MonoBehaviour
 
     public void OnNetworkToggleClick()
     {
+        if (!ngo.IsVisible)
+        {
+            panelMenu.SetActive(false);
+            panelPlayerSetting.SetActive(false);
+        }
         ngo.ToggleVisibility();
     }
 
     public void OnPlayerSettingToggleClick()
     {
+        if (!panelPlayerSetting.activeSelf)
+        {
+            if (ngo.IsVisible) ngo.ToggleVisibility();
+            panelMenu.SetActive(false);
+        }
         panelPlayerSetting.SetActive(!panelPlayerSetting.activeSelf);
     }
 

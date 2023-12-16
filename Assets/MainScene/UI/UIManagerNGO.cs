@@ -65,6 +65,7 @@ public class UIManagerNGO : MonoBehaviour
         }
     }
 
+    public bool IsVisible => root.activeSelf;
     public void ToggleVisibility() => root.SetActive(!root.activeSelf);
     public void Show() => root.SetActive(true);
     public void Hide() => root.SetActive(false);
