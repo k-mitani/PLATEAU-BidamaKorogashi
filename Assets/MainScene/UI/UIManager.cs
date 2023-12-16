@@ -23,6 +23,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textAngle;
     [SerializeField] private GameObject panelDistance;
     [SerializeField] private GameObject panelDirection;
+    [SerializeField] private GameObject textDirectionArrow;
 
     [SerializeField] private UIManagerNGO ngo;
     [SerializeField] private GameObject panelPlayerSetting;
@@ -439,6 +440,7 @@ public class UIManager : MonoBehaviour
         textDistance.text = distance.ToString("N0") + "m";
         textDirection.text = text;
         textAngle.text = angle.ToString("N0") + "";
+        textDirectionArrow.transform.rotation = Quaternion.Euler(0, 0, -angle);
     }
 
     internal void UpdateTargetLocation(TargetLocation targetLocation)
