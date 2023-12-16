@@ -13420,6 +13420,8 @@ MonoBehaviour:
   textDestination: {fileID: 816669250}
   textDescription: {fileID: 806804100}
   textAngle: {fileID: 381186305}
+  panelDistance: {fileID: 1035451231}
+  panelDirection: {fileID: 1520482199}
   ngo: {fileID: 1445623469}
   panelPlayerSetting: {fileID: 163605450}
   panelDebug: {fileID: 2045480181}

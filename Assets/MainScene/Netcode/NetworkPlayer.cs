@@ -27,6 +27,20 @@ public class NetworkPlayer : NetworkBehaviour
     private void Awake()
     {
         colorIndex.OnValueChanged += ColorIndex_OnValueChanged;
+        mode.OnValueChanged += Mode_OnValueChanged;
+    }
+
+    private void Mode_OnValueChanged(NetworkPlayerMode previousValue, NetworkPlayerMode newValue)
+    {
+        if (!IsOwner) return;
+        if (newValue == NetworkPlayerMode.BDama)
+        {
+            UIManager.Instance.ShowBDamaModePanels();
+        }
+        else if (newValue == NetworkPlayerMode.Watch)
+        {
+            UIManager.Instance.ShowWatchModePanels();
+        }
     }
 
     public override void OnNetworkSpawn()

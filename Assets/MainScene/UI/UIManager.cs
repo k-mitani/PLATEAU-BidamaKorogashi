@@ -21,6 +21,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textDestination;
     [SerializeField] private TextMeshProUGUI textDescription;
     [SerializeField] private TextMeshProUGUI textAngle;
+    [SerializeField] private GameObject panelDistance;
+    [SerializeField] private GameObject panelDirection;
 
     [SerializeField] private UIManagerNGO ngo;
     [SerializeField] private GameObject panelPlayerSetting;
@@ -445,4 +447,15 @@ public class UIManager : MonoBehaviour
         textDescription.text = targetLocation.description;
     }
 
+    internal void ShowBDamaModePanels()
+    {
+        panelDistance.SetActive(true);
+        panelDirection.SetActive(true);
+    }
+
+    internal void ShowWatchModePanels()
+    {
+        panelDistance.SetActive(false);
+        panelDirection.SetActive(false);
+    }
 }
