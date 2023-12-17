@@ -15,9 +15,16 @@ public class RankingItem : MonoBehaviour
 
     public void UpdateUI(int rank, BDama bdama, float distance)
     {
-        rankText.text = $"{rank + 1}位";
-        bdamaImage.color = bdama.meshRenderer.material.color;
-        scoreText.text = $"({bdama.player.score.Value}点)";
-        distanceText.text = $"{distance:0}m";
+        try
+        {
+            rankText.text = $"{rank + 1}位";
+            bdamaImage.color = bdama.meshRenderer.material.color;
+            scoreText.text = $"({bdama.player.score.Value}点)";
+            distanceText.text = $"{distance:0}m";
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+        }
     }
 }
