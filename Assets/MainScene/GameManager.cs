@@ -6,7 +6,6 @@ using System.Linq;
 using Cinemachine;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -16,7 +15,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [SerializeField] private bool needLoadMapDataScene = true;
-    [SerializeField] private AssetReference refMapDataScene;
+    //[SerializeField] private AssetReference refMapDataScene;
 
     [SerializeField] public CinemachineVirtualCamera vcam;
     [SerializeField] public Camera[] subcams;
@@ -42,7 +41,7 @@ public class GameManager : MonoBehaviour
         // 必要ならマップデータシーンを読み込む。
         if (needLoadMapDataScene)
         {
-            Addressables.LoadSceneAsync(refMapDataScene, LoadSceneMode.Additive);
+            //Addressables.LoadSceneAsync(refMapDataScene, LoadSceneMode.Additive);
         }
 
         StartCoroutine(UpdateDistanceLoop());
