@@ -869,7 +869,12 @@ PlayerSettings:
   XboxOneOverrideIdentityName: 
   XboxOneOverrideIdentityPublisher: 
   vrEditorSettings: {}
-  cloudServicesEnabled: {}
+  cloudServicesEnabled:
+    Build: 0
+    Game Performance: 0
+    Purchasing: 0
+    UDP: 0
+    Unity Ads: 0
   luminIcon:
     m_Name: 
     m_ModelFolderPath: 
@@ -884,10 +889,10 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 9c29b87f-257d-46e5-856e-9b6b85f9b693
+  cloudProjectId: 85989677-4529-4380-853b-a2250136dd54
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: PLATEAU-URP (1)
+  projectName: PLATEAU-URP
   organizationId: qwkj39
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
